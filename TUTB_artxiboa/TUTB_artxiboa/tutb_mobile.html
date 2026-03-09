@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f0e8" media="(prefers-color-scheme: light)">
+<title>TUTB · Artxiboa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──────────────────────────────────────────────────── */
+:root {
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-mono:    'DM Mono', monospace;
+  --font-body:    system-ui, sans-serif;
+  --radius:       16px;
+  --radius-sm:    10px;
+  --nav-h:        68px;
+  --header-h:     56px;
+  --spring:       cubic-bezier(.34,1.56,.64,1);
+  --ease:         cubic-bezier(.25,.46,.45,.94);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:        #f5f0e8;
+    --bg2:       #eae4d8;
+    --bg3:       #ffffff;
+    --surface:   #ffffff;
+    --border:    #d8d0c4;
+    --ink:       #1c1814;
+    --ink2:      #4a4238;
+    --ink3:      #8a7e72;
+    --primary:   #2d6a4f;
+    --primary-l: #d8f3dc;
+    --accent:    #b5451b;
+    --accent-l:  #fde8e0;
+    --gold:      #c77d24;
+    --gold-l:    #fef3e2;
+    --shadow:    0 2px 16px rgba(0,0,0,.10);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.14);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #131318;
+    --bg2:       #1c1c24;
+    --bg3:       #242430;
+    --surface:   #1c1c24;
+    --border:    #2e2e3e;
+    --ink:       #f0ede8;
+    --ink2:      #b8b4ae;
+    --ink3:      #6e6a64;
+    --primary:   #52b788;
+    --primary-l: #1a3a2a;
+    --accent:    #e07a5f;
+    --accent-l:  #3a1e18;
+    --gold:      #e8a838;
+    --gold-l:    #2e2210;
+    --shadow:    0 2px 16px rgba(0,0,0,.40);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.50);
+  }
+}
+
+/* ── RESET ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+input, select, textarea { font: inherit; color: inherit; }
+
+/* ── LAYOUT ──────────────────────────────────────────────────── */
+#app { display: flex; flex-direction: column; height: 100dvh; }
+
+/* ── HEADER ──────────────────────────────────────────────────── */
+#header {
+  height: var(--header-h);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+#header-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary);
+  flex: 1;
+  letter-spacing: -0.02em;
+}
+#header-title span {
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink3);
+  font-size: 0.85rem;
+}
+#header-auth button {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--primary);
+  color: #fff;
+}
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--ink3);
+}
+.avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--primary-l);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── PAGES ───────────────────────────────────────────────────── */
+#pages { flex: 1; overflow: hidden; position: relative; }
+.page {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 12px 12px calc(var(--nav-h) + 16px);
+  display: none;
+}
+.page.active { display: block; }
+
+/* ── BOTTOM NAV ──────────────────────────────────────────────── */
+#nav {
+  height: var(--nav-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-shrink: 0;
+  z-index: 10;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding-top: 6px;
+  color: var(--ink3);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color .2s;
+}
+.nav-btn .icon { font-size: 1.35rem; transition: transform .25s var(--spring); }
+.nav-btn.active { color: var(--primary); }
+.nav-btn.active .icon { transform: translateY(-2px) scale(1.15); }
+
+/* ── SEARCH ──────────────────────────────────────────────────── */
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  padding: 2px 0 8px;
+  z-index: 5;
+}
+.search-wrap { flex: 1; position: relative; }
+.search-wrap input {
+  width: 100%;
+  padding: 11px 16px 11px 40px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.search-wrap input:focus { border-color: var(--primary); }
+.search-wrap .si {
+  position: absolute;
+  left: 13px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink3);
+  pointer-events: none;
+}
+#btn-filter {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  position: relative;
+}
+#fdot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  position: absolute;
+  top: 6px; right: 6px;
+  display: none;
+}
+.rcount {
+  font-size: 0.7rem;
+  color: var(--ink3);
+  font-family: var(--font-mono);
+  margin-bottom: 8px;
+}
+
+/* ── CARDS ───────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.card-head {
+  padding: 14px 16px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+.card-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+.card-main { flex: 1; min-width: 0; }
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-sub { font-size: 0.7rem; color: var(--ink3); font-family: var(--font-mono); }
+.chevron { font-size: 0.85rem; color: var(--ink3); transition: transform .2s; flex-shrink: 0; }
+.chevron.open { transform: rotate(180deg); }
+
+/* ── ARREGLO ─────────────────────────────────────────────────── */
+.ar-section { border-top: 1px solid var(--border); }
+.ar-row {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.ar-info { flex: 1; min-width: 0; }
+.ar-name { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ar-sub { font-size: 0.68rem; color: var(--ink3); font-family: var(--font-mono); margin-top: 1px; }
+.ar-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
+.tg { background: var(--primary-l); color: var(--primary); }
+.tt { background: var(--gold-l);    color: var(--gold); }
+.tc { background: var(--accent-l);  color: var(--accent); }
+.ti { background: var(--bg3);       color: var(--ink2); border: 1px solid var(--border); }
+.ar-chev { font-size: 0.75rem; color: var(--ink3); transition: transform .2s; flex-shrink: 0; }
+.ar-chev.open { transform: rotate(90deg); }
+
+/* ── COPIAS ──────────────────────────────────────────────────── */
+.copias { border-top: 1px solid var(--border); }
+.copia {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+}
+.copia:last-child { border-bottom: none; }
+.copia-lbl {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink2);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.copia-notas { font-size: 0.68rem; color: var(--ink3); font-style: italic; margin-bottom: 6px; }
+.soportes { display: flex; flex-direction: column; gap: 5px; }
+.soporte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+}
+.s-icon { font-size: 1rem; flex-shrink: 0; }
+.s-lbl { flex: 1; font-size: 0.78rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s-loc { font-size: 0.65rem; color: var(--ink3); }
+.s-btns { display: flex; gap: 4px; flex-shrink: 0; }
+.s-btn {
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.s-view { background: var(--primary); color: #fff; }
+.s-dl   { background: var(--bg3); color: var(--ink2); border: 1px solid var(--border); }
+
+/* ── FILTER SHEET ────────────────────────────────────────────── */
+#fsheet {
+  position: fixed; inset: 0; z-index: 100;
+  display: none;
+}
+#fsheet.open { display: block; }
+#fbdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(2px);
+}
+#fpanel {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-radius: var(--radius) var(--radius) 0 0;
+  max-height: 82vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform .35s var(--ease);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+#fsheet.open #fpanel { transform: translateY(0); }
+.fhandle {
+  width: 36px; height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin: 12px auto 14px;
+}
+.ftitle {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0 16px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.fbody {
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+.ffield label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink3);
+  display: block;
+  margin-bottom: 5px;
+}
+.ffield select, .ffield input {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--bg2);
+  font-size: 0.82rem;
+  outline: none;
+  -webkit-appearance: none;
+}
+.ffield.full { grid-column: 1 / -1; }
+.factions {
+  padding: 10px 16px 16px;
+  display: flex;
+  gap: 10px;
+}
+.f-apply {
+  flex: 1; padding: 13px;
+  border-radius: var(--radius);
+  background: var(--primary); color: #fff;
+  font-weight: 700; font-size: 0.9rem;
+}
+.f-clear {
+  padding: 13px 18px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  color: var(--ink2); font-size: 0.9rem;
+}
+
+/* ── VIEWER ──────────────────────────────────────────────────── */
+#viewer {
+  position: fixed; inset: 0; z-index: 200;
+  display: none; flex-direction: column;
+  background: var(--bg);
+}
+#viewer.open { display: flex; }
+#vhead {
+  height: 52px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 12px; gap: 10px;
+  flex-shrink: 0;
+}
+#vclose {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+}
+#vtitle {
+  flex: 1; font-size: 0.85rem; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#vdl {
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: var(--primary); color: #fff;
+  font-size: 0.75rem; font-weight: 700;
+}
+#vbody {
+  flex: 1; overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+#vbody iframe { width: 100%; height: 100%; border: none; }
+#vbody img { max-width: 100%; max-height: 100%; object-fit: contain; }
+#vbody audio { width: 88%; margin: auto; }
+#vbody video { width: 100%; max-height: 100%; }
+
+/* ── KONTZERTOAK ─────────────────────────────────────────────── */
+.kcard {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.khead {
+  padding: 14px 16px;
+  display: flex; align-items: center;
+  gap: 12px; cursor: pointer;
+}
+.kdate {
+  background: var(--primary-l);
+  color: var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  text-align: center;
+  flex-shrink: 0;
+  min-width: 46px;
+}
+.kdate .kday { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; line-height: 1; }
+.kdate .kmon { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+.kinfo { flex: 1; min-width: 0; }
+.kname { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kvenue { font-size: 0.7rem; color: var(--ink3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kbody { padding: 0 16px 14px; }
+.knotas { font-size: 0.78rem; color: var(--ink2); font-style: italic; margin-bottom: 10px; }
+.prog-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.prog-row:last-child { border-bottom: none; }
+.pnum { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink3); width: 18px; text-align: right; flex-shrink: 0; }
+.pinfo { flex: 1; min-width: 0; }
+.ptitle { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.psub { font-size: 0.68rem; color: var(--ink3); }
+.p-play {
+  width: 32px; height: 32px;
+  border-radius: 50%; background: var(--primary); color: #fff;
+  font-size: 0.7rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.kmedia { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+.mpill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border-radius: 20px;
+  background: var(--bg2); border: 1px solid var(--border);
+  font-size: 0.72rem; font-weight: 600; color: var(--ink2);
+}
+
+/* ── LOGIN ───────────────────────────────────────────────────── */
+#login-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: calc(100dvh - var(--header-h) - var(--nav-h));
+  padding: 32px 24px;
+}
+.l-logo { font-family: var(--font-display); font-size: 2.4rem; font-weight: 800; color: var(--primary); letter-spacing: -0.04em; margin-bottom: 4px; }
+.l-tag { font-size: 0.82rem; color: var(--ink3); font-style: italic; font-family: var(--font-display); margin-bottom: 36px; }
+.l-form { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 13px; }
+.l-field label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink3); display: block; margin-bottom: 5px; }
+.l-field input {
+  width: 100%; padding: 13px 16px;
+  border-radius: var(--radius); border: 1.5px solid var(--border);
+  background: var(--surface); font-size: 1rem; outline: none;
+  transition: border-color .2s;
+}
+.l-field input:focus { border-color: var(--primary); }
+#l-err { font-size: 0.76rem; color: var(--accent); text-align: center; min-height: 18px; }
+#l-submit {
+  padding: 14px; border-radius: var(--radius);
+  background: var(--primary); color: #fff;
+  font-size: 1rem; font-weight: 700;
+  transition: opacity .2s, transform .15s;
+}
+#l-submit:active { opacity: .85; transform: scale(.98); }
+
+/* ── MISC ────────────────────────────────────────────────────── */
+.empty { text-align: center; padding: 60px 20px; color: var(--ink3); }
+.empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+.empty-txt { font-size: 0.82rem; }
+.spin {
+  width: 30px; height: 30px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: sp .7s linear infinite;
+  margin: 56px auto;
+}
+@keyframes sp { to { transform: rotate(360deg); } }
+#toast {
+  position: fixed;
+  bottom: calc(var(--nav-h) + 12px);
+  left: 50%; transform: translateX(-50%) translateY(18px);
+  background: var(--ink); color: var(--bg);
+  padding: 9px 18px; border-radius: 20px;
+  font-size: 0.8rem; font-weight: 600;
+  opacity: 0; transition: opacity .25s, transform .25s var(--spring);
+  pointer-events: none; z-index: 999; white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header id="header">
+    <div id="header-title">TUTB <span>Artxiboa</span></div>
+    <div id="header-auth"></div>
+  </header>
+
+  <div id="pages">
+
+    <!-- BILATU -->
+    <div class="page active" id="page-bilatu">
+      <div class="search-bar">
+        <div class="search-wrap">
+          <span class="si">🔍</span>
+          <input type="search" id="q" placeholder="Obra bat bilatu..." autocomplete="off" autocorrect="off" autocapitalize="none">
+        </div>
+        <button id="btn-filter">⚙️<div id="fdot"></div></button>
+      </div>
+      <div id="rcount" class="rcount"></div>
+      <div id="rlist"></div>
+    </div>
+
+    <!-- KONTZERTOAK -->
+    <div class="page" id="page-kontzertoak">
+      <div id="klist"></div>
+    </div>
+
+    <!-- KONTUA -->
+    <div class="page" id="page-kontua">
+      <div id="login-wrap">
+        <div class="l-logo">TUTB</div>
+        <div class="l-tag">Txistularis Artxiboa</div>
+        <div id="l-form-wrap" class="l-form">
+          <div class="l-field">
+            <label>Erabiltzailea</label>
+            <input type="text" id="l-user" autocomplete="username" autocorrect="off" autocapitalize="none">
+          </div>
+          <div class="l-field">
+            <label>Pasahitza</label>
+            <input type="password" id="l-pass" autocomplete="current-password">
+          </div>
+          <div id="l-err"></div>
+          <button id="l-submit">Sartu →</button>
+        </div>
+        <div id="l-logged" class="hidden" style="text-align:center;padding:20px 0">
+          <div style="font-size:2rem;margin-bottom:10px">✅</div>
+          <div id="l-msg" style="font-size:0.88rem;color:var(--ink2);margin-bottom:20px"></div>
+          <button id="l-logout" style="padding:11px 24px;border-radius:var(--radius);border:1.5px solid var(--border);font-size:0.85rem;color:var(--ink2)">Irten</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <nav id="nav">
+    <button class="nav-btn active" data-page="bilatu">
+      <span class="icon">🔍</span><span>Bilatu</span>
+    </button>
+    <button class="nav-btn" data-page="kontzertoak">
+      <span class="icon">🎵</span><span>Kontzertoak</span>
+    </button>
+    <button class="nav-btn" data-page="kontua">
+      <span class="icon">👤</span><span>Kontua</span>
+    </button>
+  </nav>
+</div>
+
+<!-- FILTER SHEET -->
+<div id="fsheet">
+  <div id="fbdrop"></div>
+  <div id="fpanel">
+    <div class="fhandle"></div>
+    <div class="ftitle">Iragazkiak</div>
+    <div class="fbody">
+      <div class="ffield full"><label>Generoa</label><select id="f-genero"><option value="">— Guztiak —</option></select></div>
+      <div class="ffield"><label>Tonalitatea</label><select id="f-tonalidad"><option value="">— Guztiak —</option></select></div>
+      <div class="ffield"><label>Moldatzailea</label><select id="f-arreglista"><option value="">— Guztiak —</option></select></div>
+      <div class="ffield"><label>Konpositorea</label><select id="f-compositor"><option value="">— Guztiak —</option></select></div>
+      <div class="ffield"><label>Instrumentua</label><select id="f-instrumento"><option value="">— Guztiak —</option></select></div>
+      <div class="ffield"><label>Testuingurua</label><select id="f-context"><option value="">— Guztiak —</option></select></div>
+      <div class="ffield"><label>Urte min</label><input type="number" id="f-ymin" placeholder="1900"></div>
+      <div class="ffield"><label>Urte max</label><input type="number" id="f-ymax" placeholder="2030"></div>
+    </div>
+    <div class="factions">
+      <button class="f-clear" id="f-clear-btn">Garbitu</button>
+      <button class="f-apply" id="f-apply-btn">Aplikatu</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEWER -->
+<div id="viewer">
+  <div id="vhead">
+    <button id="vclose">✕</button>
+    <div id="vtitle">—</div>
+    <button id="vdl">⬇ Deskargatu</button>
+  </div>
+  <div id="vbody"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'http://localhost:5000/api'; // ← cambiar en producción
+
+// ── STATE ──────────────────────────────────────────────────────
+const S = {
+  token:    localStorage.getItem('tutb_token') || null,
+  user:     JSON.parse(localStorage.getItem('tutb_user') || 'null'),
+  lookups:  {},
+  cardOpen: {},
+  arOpen:   {},
+  kLoaded:  false,
+  vUrl:     '',
+};
+
+// ── API ────────────────────────────────────────────────────────
+async function api(path, opts = {}) {
+  const h = { 'Content-Type': 'application/json', ...opts.headers };
+  if (S.token) h['Authorization'] = 'Bearer ' + S.token;
+  const r = await fetch(API + path, { ...opts, headers: h });
+  if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.error || `HTTP ${r.status}`); }
+  return r.json();
+}
+
+// ── TOAST ──────────────────────────────────────────────────────
+let _tt;
+function toast(m) {
+  const el = document.getElementById('toast');
+  el.textContent = m; el.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ── ESC ────────────────────────────────────────────────────────
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+// ── AUTH UI ────────────────────────────────────────────────────
+function authUI() {
+  const ha = document.getElementById('header-auth');
+  if (S.user) {
+    ha.innerHTML = `<div class="user-chip"><div class="avatar">${S.user.username[0].toUpperCase()}</div><span>${esc(S.user.username)}</span></div>`;
+  } else {
+    ha.innerHTML = `<button onclick="goPage('kontua')" style="font-size:.75rem;font-weight:700;padding:6px 14px;border-radius:20px;background:var(--primary);color:#fff">Sartu</button>`;
+  }
+  const lf = document.getElementById('l-form-wrap');
+  const ll = document.getElementById('l-logged');
+  if (S.user) {
+    lf.classList.add('hidden'); ll.classList.remove('hidden');
+    document.getElementById('l-msg').textContent = `${S.user.username} · ${S.user.role}`;
+  } else {
+    lf.classList.remove('hidden'); ll.classList.add('hidden');
+  }
+}
+
+// ── LOGIN ──────────────────────────────────────────────────────
+document.getElementById('l-submit').onclick = async () => {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  const err = document.getElementById('l-err');
+  err.textContent = '';
+  if (!u || !p) { err.textContent = 'Bete eremu guztiak'; return; }
+  try {
+    const d = await api('/auth/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) });
+    S.token = d.token; S.user = { username: d.username, role: d.role, usuario_id: d.usuario_id };
+    localStorage.setItem('tutb_token', S.token);
+    localStorage.setItem('tutb_user', JSON.stringify(S.user));
+    authUI(); toast('Ongi etorri, ' + d.username + ' ✓'); goPage('bilatu');
+  } catch(e) { err.textContent = 'Erabiltzailea edo pasahitza okerra'; }
+};
+
+document.getElementById('l-logout').onclick = () => {
+  S.token = null; S.user = null;
+  localStorage.removeItem('tutb_token'); localStorage.removeItem('tutb_user');
+  authUI(); toast('Saioa itxi da');
+};
+
+// ── NAV ────────────────────────────────────────────────────────
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id)?.classList.add('active');
+  document.querySelector(`.nav-btn[data-page="${id}"]`)?.classList.add('active');
+  if (id === 'kontzertoak' && !S.kLoaded) loadKontzertoak();
+}
+document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => goPage(b.dataset.page));
+
+// ── LOOKUPS ────────────────────────────────────────────────────
+async function loadLookups() {
+  await Promise.all(['generos','tonalidades','arreglistas','compositores','instrumentos','contextos'].map(
+    async k => { try { S.lookups[k] = await api('/lookups/' + k); } catch(e) {} }
+  ));
+  [
+    ['f-genero',     'generos',      'genero_id'],
+    ['f-tonalidad',  'tonalidades',  'tonalidad_id'],
+    ['f-arreglista', 'arreglistas',  'arreglista_id'],
+    ['f-compositor', 'compositores', 'compositor_id'],
+    ['f-instrumento','instrumentos', 'instrumento_id'],
+    ['f-context',    'contextos',    'context_id'],
+  ].forEach(([id, key, pk]) => {
+    const el = document.getElementById(id); if (!el) return;
+    el.innerHTML = '<option value="">— Guztiak —</option>';
+    (S.lookups[key]||[]).forEach(i => {
+      el.innerHTML += `<option value="${i[pk]}">${esc(i.nombre)}</option>`;
+    });
+  });
+}
+
+// ── SEARCH ─────────────────────────────────────────────────────
+let _st;
+document.getElementById('q').addEventListener('input', () => {
+  clearTimeout(_st); _st = setTimeout(search, 380);
+});
+
+async function search() {
+  const p = new URLSearchParams();
+  const q = document.getElementById('q').value.trim();
+  if (q) p.set('q', q);
+  [['f-genero','genero_id'],['f-tonalidad','tonalidad_id'],['f-arreglista','arreglista_id'],
+   ['f-compositor','compositor_id'],['f-instrumento','instrumento_id'],['f-context','context_id']].forEach(([id,key]) => {
+    const v = document.getElementById(id)?.value; if (v) p.set(key, v);
+  });
+  const ymin = document.getElementById('f-ymin')?.value; if (ymin) p.set('anyo_min', ymin);
+  const ymax = document.getElementById('f-ymax')?.value; if (ymax) p.set('anyo_max', ymax);
+
+  const hasF = [...p.keys()].some(k => k !== 'q');
+  document.getElementById('fdot').style.display = hasF ? 'block' : 'none';
+
+  const list = document.getElementById('rlist');
+  list.innerHTML = '<div class="spin"></div>';
+  document.getElementById('rcount').textContent = '';
+
+  try {
+    const rows = await api('/arreglos/search?' + p.toString());
+    renderResults(rows);
+  } catch(e) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-txt">${esc(e.message)}</div></div>`;
+  }
+}
+
+function renderResults(rows) {
+  const list = document.getElementById('rlist');
+  const rc = document.getElementById('rcount');
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🎼</div><div class="empty-txt">Ez da emaitzarik aurkitu</div></div>';
+    rc.textContent = ''; return;
+  }
+  // Group by obra
+  const om = {};
+  rows.forEach(r => {
+    if (!om[r.obra_id]) om[r.obra_id] = { id: r.obra_id, title: r.obra_title, ars: [] };
+    om[r.obra_id].ars.push(r);
+  });
+  const obras = Object.values(om);
+  rc.textContent = `${obras.length} obra · ${rows.length} moldaketa`;
+  list.innerHTML = obras.map(o => `
+    <div class="card">
+      <div class="card-head" onclick="toggleCard(${o.id})">
+        <div class="card-icon">🎼</div>
+        <div class="card-main">
+          <div class="card-title">${esc(o.title)}</div>
+          <div class="card-sub">${o.ars.length} moldaketa</div>
+        </div>
+        <div class="chevron ${S.cardOpen[o.id]?'open':''}" id="chev-${o.id}">▾</div>
+      </div>
+      <div class="ar-section" id="obra-${o.id}" style="${S.cardOpen[o.id]?'':'display:none'}">
+        ${o.ars.map(ar => renderAr(ar)).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderAr(ar) {
+  const meta = [ar.arreglista_nombre, ar.anyo, ar.duracion ? '⏱ '+ar.duracion : ''].filter(Boolean).join(' · ');
+  const tags = [
+    ar.genero_nombre    ? `<span class="tag tg">${esc(ar.genero_nombre)}</span>` : '',
+    ar.tonalidad_nombre ? `<span class="tag tt">${esc(ar.tonalidad_nombre)}</span>` : '',
+    ar.context_nombre   ? `<span class="tag tc">📌 ${esc(ar.context_nombre)}</span>` : '',
+    ...(ar.instrumentos||[]).map(i => `<span class="tag ti">${esc(i)}</span>`),
+  ].filter(Boolean).join('');
+  const copias = (ar.copias||[]).map(cp => renderCopia(cp)).join('');
+  return `
+  <div>
+    <div class="ar-row" onclick="toggleAr(${ar.arreglo_id})">
+      <div class="ar-info">
+        <div class="ar-name">${esc(ar.arreglista_nombre || 'Moldaketa #'+ar.arreglo_id)}</div>
+        <div class="ar-sub">${esc(meta)}</div>
+        ${tags ? `<div class="ar-tags">${tags}</div>` : ''}
+      </div>
+      <div class="ar-chev ${S.arOpen[ar.arreglo_id]?'open':''}" id="arch-${ar.arreglo_id}">▶</div>
+    </div>
+    <div class="copias" id="ar-${ar.arreglo_id}" style="${S.arOpen[ar.arreglo_id]?'':'display:none'}">
+      ${copias || '<div style="padding:10px 16px;font-size:.76rem;color:var(--ink3)">Ez dago kopiarik</div>'}
+    </div>
+  </div>`;
+}
+
+function renderCopia(cp) {
+  const soportes = (cp.soportes||[]).map(s => {
+    const icon = fileIcon(s);
+    const url = s.file_path ? `${API}/media/${s.file_path}` : s.url_externa;
+    const lbl = esc(s.tipo_soporte_nombre || 'Soporte');
+    if (!url) return `<div class="soporte" style="opacity:.65"><span class="s-icon">${icon}</span><span class="s-lbl">${lbl}</span>${s.ubicacion_nombre ? `<span class="s-loc">${esc(s.ubicacion_nombre)}</span>` : ''}</div>`;
+    return `<div class="soporte"><span class="s-icon">${icon}</span><span class="s-lbl">${lbl}</span><div class="s-btns"><button class="s-btn s-view" onclick="openViewer('${url.replace(/'/g,"\\'")}','${lbl.replace(/'/g,"\\'")}')">👁</button><button class="s-btn s-dl" onclick="dl('${url.replace(/'/g,"\\'")}','${lbl.replace(/'/g,"\\'")}')">⬇</button></div></div>`;
+  }).join('');
+  return `<div class="copia">
+    <div class="copia-lbl">📋 ${esc(cp.tipo_copia_nombre||'Kopia')} <span style="font-family:var(--font-mono);font-size:.62rem;color:var(--ink3)">#${cp.copia_id}</span></div>
+    ${cp.notas ? `<div class="copia-notas">${esc(cp.notas)}</div>` : ''}
+    <div class="soportes">${soportes || '<div style="font-size:.72rem;color:var(--ink3)">Ez dago euskarririk</div>'}</div>
+  </div>`;
+}
+
+function fileIcon(s) {
+  const p = (s.file_path||'').toLowerCase();
+  if (p.endsWith('.pdf')) return '📄';
+  if (p.match(/\.(mp3|wav|ogg|flac|m4a|aac)$/)) return '🎵';
+  if (p.match(/\.(mp4|mov|webm)$/)) return '🎬';
+  if (p.match(/\.(jpg|jpeg|png|gif|webp)$/)) return '🖼';
+  if (p.match(/\.(mscz|mxl|xml|sib|musx)$/)) return '🎹';
+  if (s.url_externa) return '🔗';
+  return '📎';
+}
+
+function toggleCard(id) {
+  S.cardOpen[id] = !S.cardOpen[id];
+  document.getElementById('obra-'+id)?.style.setProperty('display', S.cardOpen[id] ? '' : 'none');
+  document.getElementById('chev-'+id)?.classList.toggle('open', S.cardOpen[id]);
+}
+function toggleAr(id) {
+  S.arOpen[id] = !S.arOpen[id];
+  document.getElementById('ar-'+id)?.style.setProperty('display', S.arOpen[id] ? '' : 'none');
+  document.getElementById('arch-'+id)?.classList.toggle('open', S.arOpen[id]);
+}
+
+// ── FILTER SHEET ───────────────────────────────────────────────
+document.getElementById('btn-filter').onclick = () => document.getElementById('fsheet').classList.add('open');
+document.getElementById('fbdrop').onclick = () => document.getElementById('fsheet').classList.remove('open');
+document.getElementById('f-apply-btn').onclick = () => { document.getElementById('fsheet').classList.remove('open'); search(); };
+document.getElementById('f-clear-btn').onclick = () => {
+  ['f-genero','f-tonalidad','f-arreglista','f-compositor','f-instrumento','f-context'].forEach(id => { const e = document.getElementById(id); if(e) e.value=''; });
+  ['f-ymin','f-ymax'].forEach(id => { const e = document.getElementById(id); if(e) e.value=''; });
+  document.getElementById('fdot').style.display = 'none';
+  document.getElementById('fsheet').classList.remove('open');
+  search();
+};
+
+// ── VIEWER ─────────────────────────────────────────────────────
+function openViewer(url, label) {
+  S.vUrl = url;
+  document.getElementById('vtitle').textContent = label;
+  const body = document.getElementById('vbody');
+  const ext = url.split('?')[0].split('.').pop().toLowerCase();
+  if (ext === 'pdf') {
+    body.innerHTML = `<iframe src="${url}"></iframe>`;
+  } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+    body.innerHTML = `<img src="${url}" alt="${esc(label)}">`;
+  } else if (['mp3','wav','ogg','flac','m4a','aac'].includes(ext)) {
+    body.innerHTML = `<audio controls autoplay src="${url}"></audio>`;
+  } else if (['mp4','mov','webm','avi'].includes(ext)) {
+    body.innerHTML = `<video controls autoplay playsinline src="${url}"></video>`;
+  } else {
+    const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
+    const src = yt ? `https://www.youtube.com/embed/${yt[1]}` : url;
+    body.innerHTML = `<iframe src="${src}" allowfullscreen></iframe>`;
+  }
+  document.getElementById('viewer').classList.add('open');
+}
+document.getElementById('vclose').onclick = () => {
+  document.getElementById('viewer').classList.remove('open');
+  document.getElementById('vbody').innerHTML = '';
+};
+document.getElementById('vdl').onclick = () => dl(S.vUrl, document.getElementById('vtitle').textContent);
+
+function dl(url, label) {
+  if (!S.token) { toast('Deskargatzeko saioa hasi behar duzu'); return; }
+  fetch(url, { headers: { 'Authorization': 'Bearer ' + S.token } })
+    .then(r => { if (!r.ok) throw new Error(); return r.blob(); })
+    .then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const ext = url.split('.').pop().split('?')[0];
+      a.download = (label||'fitxategia').replace(/[^\w\-\.]/g,'_') + '.' + ext;
+      a.click(); URL.revokeObjectURL(a.href);
+    })
+    .catch(() => toast('Errorea deskargatzean'));
+}
+
+// ── KONTZERTOAK ────────────────────────────────────────────────
+async function loadKontzertoak() {
+  S.kLoaded = true;
+  const list = document.getElementById('klist');
+  list.innerHTML = '<div class="spin"></div>';
+  try {
+    const ks = await api('/conciertos');
+    if (!ks.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">🎤</div><div class="empty-txt">Ez dago kontzertoak</div></div>'; return; }
+    list.innerHTML = ks.map(c => {
+      const f = c.fecha ? new Date(c.fecha) : null;
+      const day = f ? f.getDate() : '—';
+      const mon = f ? f.toLocaleString('eu', { month: 'short' }).toUpperCase() : '';
+      return `<div class="kcard">
+        <div class="khead" onclick="toggleK(${c.concierto_id})">
+          <div class="kdate"><div class="kday">${day}</div><div class="kmon">${mon}</div></div>
+          <div class="kinfo">
+            <div class="kname">${esc(c.nombre)}</div>
+            ${c.venue ? `<div class="kvenue">📍 ${esc(c.venue)}</div>` : ''}
+          </div>
+          <div class="chevron" id="kchev-${c.concierto_id}">▾</div>
+        </div>
+        <div class="kbody" id="kb-${c.concierto_id}" style="display:none"></div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-txt">${esc(e.message)}</div></div>`;
+  }
+}
+
+async function toggleK(id) {
+  const body = document.getElementById('kb-'+id);
+  const chev = document.getElementById('kchev-'+id);
+  const isOpen = body.style.display !== 'none';
+  if (isOpen) { body.style.display = 'none'; chev?.classList.remove('open'); return; }
+  body.style.display = ''; chev?.classList.add('open');
+  if (body.dataset.loaded) return;
+  body.innerHTML = '<div class="spin" style="margin:20px auto"></div>';
+  try {
+    const c = await api('/conciertos/' + id);
+    body.dataset.loaded = '1';
+    let h = '';
+    if (c.notas) h += `<div class="knotas">${esc(c.notas)}</div>`;
+    if (c.programa?.length) {
+      h += c.programa.map(p => `
+        <div class="prog-row">
+          <div class="pnum">${p.orden}</div>
+          <div class="pinfo">
+            <div class="ptitle">${esc(p.obra_title||'—')}</div>
+            <div class="psub">${[p.tonalidad, p.genero, p.duracion?'⏱ '+p.duracion:''].filter(Boolean).join(' · ')}</div>
+          </div>
+          ${(p.audio_ref_path||p.audio_ref_url) ? `<button class="p-play" onclick="openViewer('${p.audio_ref_path ? API+'/media/'+p.audio_ref_path : p.audio_ref_url}','${esc(p.obra_title||'')}')">▶</button>` : ''}
+        </div>`).join('');
+      if (c.duracion_total) h += `<div style="text-align:right;padding:8px 0 0;font-family:var(--font-mono);font-size:.68rem;color:var(--ink3)">⏱ ${c.duracion_total}</div>`;
+    } else {
+      h += '<div style="font-size:.76rem;color:var(--ink3);padding:6px 0">Ez dago programarik</div>';
+    }
+    const media = [];
+    if (c.grab_audio_path||c.grab_audio_url) media.push(['🎵 Audioa', c.grab_audio_path ? API+'/media/'+c.grab_audio_path : c.grab_audio_url]);
+    if (c.grab_video_path||c.grab_video_url) media.push(['🎬 Bideoa', c.grab_video_path ? API+'/media/'+c.grab_video_path : c.grab_video_url]);
+    if (c.kartela_path) media.push(['🖼 Kartela', API+'/media/'+c.kartela_path]);
+    if (c.esku_programa_path) media.push(['📄 Esku-programa', API+'/media/'+c.esku_programa_path]);
+    if (media.length) h += `<div class="kmedia">${media.map(([l,u]) => `<button class="mpill" onclick="openViewer('${u}','${esc(l)}')">${esc(l)}</button>`).join('')}</div>`;
+    body.innerHTML = h;
+  } catch(e) {
+    body.innerHTML = `<div style="padding:10px;font-size:.76rem;color:var(--accent)">${esc(e.message)}</div>`;
+  }
+}
+
+// ── INIT ───────────────────────────────────────────────────────
+(async () => {
+  authUI();
+  await loadLookups();
+  search();
+})();
+</script>
+</body>
+</html>
