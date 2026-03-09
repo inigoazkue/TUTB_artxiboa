@@ -446,6 +446,144 @@ body.pdf-open #app { margin-right: 48vw; transition: margin-right 0.28s cubic-be
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 768px)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── BOTTOM NAV ── */
+  #bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: var(--surface);
+    border-top: 1.5px solid var(--border);
+    z-index: 150;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -4px 16px rgba(67,97,238,0.10);
+  }
+  .bnav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color .2s;
+    padding-top: 4px;
+  }
+  .bnav-btn .bni { font-size: 1.25rem; transition: transform .25s cubic-bezier(.34,1.56,.64,1); }
+  .bnav-btn.active { color: var(--primary); }
+  .bnav-btn.active .bni { transform: translateY(-2px) scale(1.15); }
+
+  /* ── HEADER: hide desktop nav, shrink ── */
+  #nav { display: none; }
+  #header { padding: 0 14px; height: 50px; }
+  .logo { font-size: 1rem; }
+  #user-area { gap: 6px; font-size: 0.74rem; }
+  #user-area .username { display: none; }
+  #btn-logout { padding: 4px 9px; font-size: 0.7rem; }
+  .role-badge { font-size: 0.62rem; padding: 2px 7px; }
+
+  /* ── MAIN: add bottom padding for nav bar ── */
+  #main { padding: 14px 12px calc(60px + env(safe-area-inset-bottom) + 14px); }
+
+  /* ── LOGIN ── */
+  .login-box { width: 100%; max-width: 100%; border-radius: 0; padding: 36px 24px; min-height: 100dvh; display: flex; flex-direction: column; justify-content: center; }
+
+  /* ── MAM layout: stack vertically ── */
+  #mam-layout { grid-template-columns: 1fr; }
+  #obras-list { max-height: 220px; }
+  #obras-list-wrap { margin-bottom: 14px; }
+
+  /* ── FILTERS: single column ── */
+  #page-bista .card > div:first-child { grid-template-columns: 1fr !important; }
+
+  /* ── CONCIERTOS: stack ── */
+  #conciertos-layout { grid-template-columns: 1fr; }
+  #conciertos-list { max-height: 220px; overflow-y: auto; }
+
+  /* ── PDF PANEL: full screen ── */
+  #pdf-panel { width: 100vw; min-width: unset; top: 50px; }
+  body.pdf-open #app { margin-right: 0; }
+
+  /* ── PLAYER BAR ── */
+  #player-bar { padding: 8px 12px; padding-bottom: calc(60px + env(safe-area-inset-bottom)); flex-wrap: wrap; gap: 8px; }
+  #player-audio { width: 100%; order: 3; }
+  body.player-open #main { padding-bottom: calc(130px + env(safe-area-inset-bottom)); }
+
+  /* ── MODALS: full width ── */
+  .modal { padding: 20px 16px; max-width: 100%; }
+
+  /* ── TOAST: bottom center ── */
+  .toast { right: 50%; transform: translateX(50%); bottom: calc(68px + env(safe-area-inset-bottom)); max-width: 90vw; text-align: center; }
+
+  /* ── TREES ── */
+  .tree-children { padding-left: 10px; margin-left: 22px; }
+
+  /* ── LOOKUP GRID ── */
+  .lookup-grid { grid-template-columns: 1fr; }
+
+  /* ── PAGE TITLE ── */
+  .page-title { font-size: 1.3rem; }
+
+  /* ── FILTERS BAR (Bista) ── */
+  .filters-bar { gap: 6px; padding: 10px 12px; }
+  .filters-bar select { min-width: 100px; }
+
+  /* ── OVERFLOW GENERAL ── */
+  #app, #main, body { overflow-x: hidden; }
+
+  /* ── TREE: evitar desbordamiento ── */
+  .tree-node { max-width: 100%; }
+  .tree-node-header { flex-wrap: wrap; gap: 4px; }
+  .btn.btn-sm, .btn.btn-xs { white-space: normal; }
+  .tree-actions { display: flex !important; flex-wrap: wrap; }
+
+  /* ── SOPORTE ROW: apilar acciones ── */
+  .soporte-row { flex-wrap: wrap; gap: 6px; }
+  .soporte-path { word-break: break-all; }
+  .soporte-actions { flex-wrap: wrap; }
+
+  /* ── PROGRAMA TABLE: scroll horizontal ── */
+  .programa-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .programa-table { min-width: 480px; }
+
+  /* ── RECORDING CARD ── */
+  .recording-card { padding: 14px 14px; }
+
+  /* ── BISTA RESULTS: 1 columna ── */
+  #bista-results > div { grid-template-columns: 1fr !important; }
+
+  /* ── MODALES: grids inline a 1 columna ── */
+  .modal [style*="grid-template-columns:1fr 1fr"],
+  .modal [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── BADGES / ARREGLO IDENTITY: wrap ── */
+  .arreglo-identity { flex-wrap: wrap; }
+  .btn-inline-add { padding: 8px 8px; font-size: 0.76rem; }
+
+  /* ── CONCIERTO DETAIL ── */
+  #concierto-detail { overflow-x: hidden; }
+  #concierto-detail .card { padding: 14px 12px; }
+}
+
+/* ── DESKTOP: hide bottom nav ── */
+@media (min-width: 769px) {
+  #bottom-nav { display: none; }
+}
 </style>
 </head>
 <body>
@@ -455,7 +593,7 @@ body.pdf-open #app { margin-right: 48vw; transition: margin-right 0.28s cubic-be
   <div class="login-box">
     <div class="login-logo">
       <h1>TUTB</h1>
-      <p>Artxiboa</p>
+      <p>Txistularis Artxiboa</p>
     </div>
     <div class="field">
       <label>Erabiltzailea</label>
@@ -681,6 +819,19 @@ body.pdf-open #app { margin-right: 48vw; transition: margin-right 0.28s cubic-be
     </section>
 
   </main>
+
+  <!-- BOTTOM NAV (móvil) -->
+  <nav id="bottom-nav" style="display:none">
+    <button class="bnav-btn active" data-page="bista">
+      <span class="bni">🏠</span><span>Nabigatu</span>
+    </button>
+    <button class="bnav-btn" data-page="mam">
+      <span class="bni">🎼</span><span>Zuhaitza</span>
+    </button>
+    <button class="bnav-btn" data-page="conciertos">
+      <span class="bni">🎵</span><span>Kontzertuak</span>
+    </button>
+  </nav>
 </div>
 
 <!-- PLAYER -->
@@ -870,6 +1021,8 @@ function showApp() {
   document.getElementById('nav-admin').style.display     = canEdit() ? '' : 'none';
   document.getElementById('btn-new-obra').style.display      = canEdit() ? '' : 'none';
   document.getElementById('btn-new-concierto').style.display = canEdit() ? '' : 'none';
+  // Show bottom nav on mobile (CSS @media handles visibility, just remove inline style)
+  document.getElementById('bottom-nav').style.display = '';
   initApp();
 }
 
@@ -929,22 +1082,25 @@ document.getElementById('btn-guest').onclick = e => { e.preventDefault(); setUse
 document.getElementById('btn-logout').onclick = logout;
 
 // ── NAV ──
+function navigateTo(page) {
+  document.querySelectorAll('#nav button, .bnav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`#nav button[data-page="${page}"], .bnav-btn[data-page="${page}"]`)
+    .forEach(b => b.classList.add('active'));
+  document.querySelectorAll('#main section').forEach(s => s.style.display = 'none');
+  document.getElementById('page-' + page).style.display = '';
+  loadLookups();
+  loadObras(document.getElementById('search-input')?.value.trim() || '');
+  allArreglosForSelect = [];
+  if (page === 'admin')      loadAdmin();
+  if (page === 'conciertos') loadConciertos();
+  if (page === 'bista')      initBista();
+  if (page === 'mam' && state.selectedObra) selectObra(state.selectedObra.obra_id);
+}
 document.querySelectorAll('#nav button[data-page]').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('#main section').forEach(s => s.style.display = 'none');
-    document.getElementById('page-' + btn.dataset.page).style.display = '';
-    // Always refresh shared data on tab switch
-    loadLookups();
-    loadObras(document.getElementById('search-input')?.value.trim() || '');
-    allArreglosForSelect = []; // invalidate pareja cache
-    if (btn.dataset.page === 'admin')      loadAdmin();
-    if (btn.dataset.page === 'conciertos') loadConciertos();
-    if (btn.dataset.page === 'bista')      initBista();
-    if (btn.dataset.page === 'mam' && state.selectedObra)
-      selectObra(state.selectedObra.obra_id);
-  };
+  btn.onclick = () => navigateTo(btn.dataset.page);
+});
+document.querySelectorAll('.bnav-btn[data-page]').forEach(btn => {
+  btn.onclick = () => navigateTo(btn.dataset.page);
 });
 
 // ── INIT ──
@@ -1697,7 +1853,7 @@ async function selectConcierto(id) {
 function renderConcierto(c) {
   const detail = document.getElementById('concierto-detail');
   const programa = c.programa?.length ? `
-    <table class="programa-table">
+    <div class="programa-table-wrap"><table class="programa-table">
       <thead><tr><th>#</th><th>Obra</th><th>Tonalidad</th><th>Generoa</th><th>Iraupena</th><th>Instrumentazioa</th><th>Audio ref.</th>${canEdit()?'<th></th>':''}</tr></thead>
       <tbody>${c.programa.map(p=>`
         <tr>
@@ -1711,7 +1867,7 @@ function renderConcierto(c) {
           ${canEdit()?`<td><button class="btn btn-danger btn-sm" onclick="deletePrograma(${p.programa_id},${c.concierto_id})">🗑</button></td>`:''}
         </tr>`).join('')}
       </tbody>
-    </table>
+    </table></div>
     ${c.duracion_total?`<div class="dur-total">⏱ Iraupena guztira: ${c.duracion_total}</div>`:''}
   `:'<div style="padding:20px;font-style:italic;color:var(--ink3)">Ez dago programarik</div>';
 
@@ -2393,8 +2549,8 @@ function bistaCard(r) {
 
 function goToMam(obra_id) {
   // Navega al Zuhaitz orokorra y selecciona la obra
-  document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
-  document.querySelector('#nav button[data-page="mam"]').classList.add('active');
+  document.querySelectorAll('#nav button, .bnav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('[data-page="mam"]').forEach(b => b.classList.add('active'));
   document.querySelectorAll('#main section').forEach(s => s.style.display = 'none');
   document.getElementById('page-mam').style.display = '';
   selectObra(obra_id);
