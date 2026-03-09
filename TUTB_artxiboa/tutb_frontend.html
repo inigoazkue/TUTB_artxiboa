@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TUTB · Artxiboa</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f0f4ff;
+  --bg2:      #e4eaff;
+  --bg3:      #d4dcff;
+  --surface:  #ffffff;
+  --ink:      #0f1523;
+  --ink2:     #3a4260;
+  --ink3:     #7a84a8;
+  --primary:  #4361ee;
+  --primary2: #3a56d4;
+  --primary-light: #eef1ff;
+  --accent:   #f72585;
+  --accent2:  #7209b7;
+  --green:    #06d6a0;
+  --green-bg: #e6faf5;
+  --yellow:   #ffd166;
+  --yellow-bg:#fff8e6;
+  --red:      #ef233c;
+  --red-bg:   #fdedf0;
+  --border:   #d8dfff;
+  --shadow-sm: 0 1px 4px rgba(67,97,238,0.08);
+  --shadow:    0 4px 16px rgba(67,97,238,0.12);
+  --shadow-lg: 0 12px 40px rgba(67,97,238,0.18);
+  --radius:   10px;
+  --radius-sm: 6px;
+  --font: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body { font-family: var(--font); background: var(--bg); color: var(--ink); min-height: 100vh; line-height: 1.6; }
+a { color: var(--primary); text-decoration: none; }
+button { cursor: pointer; font-family: var(--font); }
+input, select, textarea {
+  font-family: var(--font); background: var(--surface);
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 8px 12px; color: var(--ink); font-size: 0.88rem; width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(67,97,238,0.12);
+}
+label { font-size: 0.78rem; color: var(--ink2); font-weight: 600; display: block; margin-bottom: 4px; letter-spacing: 0.02em; }
+.field { margin-bottom: 14px; }
+h1,h2,h3,h4 { font-family: var(--font-display); }
+
+/* ── LAYOUT ── */
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* HEADER */
+#header {
+  background: var(--surface);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 28px;
+  display: flex; align-items: center; gap: 20px;
+  height: 58px; position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.logo {
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
+  color: var(--primary); letter-spacing: -0.01em; white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+}
+.logo .dot { color: var(--accent); }
+#nav { display: flex; gap: 2px; flex: 1; }
+#nav button {
+  background: none; border: none; color: var(--ink3);
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  font-size: 0.85rem; font-weight: 600; transition: all 0.15s;
+}
+#nav button:hover { color: var(--ink); background: var(--bg); }
+#nav button.active { color: var(--primary); background: var(--primary-light); }
+#user-area { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+.username { font-weight: 700; color: var(--ink2); }
+.role-badge {
+  background: var(--primary-light); color: var(--primary);
+  padding: 3px 10px; border-radius: 20px; font-size: 0.7rem;
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+}
+#btn-logout {
+  background: none; border: 1.5px solid var(--border);
+  color: var(--ink2); padding: 5px 12px; border-radius: var(--radius-sm);
+  font-size: 0.78rem; font-weight: 600; transition: all 0.15s;
+}
+#btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+/* MAIN */
+#main { flex: 1; padding: 28px 32px; max-width: 1440px; margin: 0 auto; width: 100%; }
+
+/* ── COMPONENTS ── */
+.card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-sm);
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  border: none; font-size: 0.83rem; font-weight: 700;
+  transition: all 0.15s; letter-spacing: 0.01em; white-space: nowrap;
+}
+.btn-primary { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(67,97,238,0.3); }
+.btn-primary:hover { background: var(--primary2); box-shadow: 0 4px 12px rgba(67,97,238,0.4); transform: translateY(-1px); }
+.btn-secondary { background: var(--surface); color: var(--ink2); border: 1.5px solid var(--border); }
+.btn-secondary:hover { background: var(--bg); border-color: var(--primary); color: var(--primary); }
+.btn-danger { background: var(--red); color: white; }
+.btn-danger:hover { background: #d4162e; }
+.btn-accent { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(247,37,133,0.3); }
+.btn-sm { padding: 5px 12px; font-size: 0.76rem; }
+.btn-xs { padding: 3px 8px; font-size: 0.72rem; }
+.btn-ghost { background: none; border: none; color: var(--primary); padding: 4px 8px; font-size: 0.8rem; font-weight: 600; border-radius: var(--radius-sm); }
+.btn-ghost:hover { background: var(--primary-light); }
+
+.page-title {
+  font-family: var(--font-display); font-size: 1.7rem; color: var(--ink);
+  margin-bottom: 4px; display: flex; align-items: center; gap: 10px;
+}
+.page-subtitle { color: var(--ink3); font-size: 0.85rem; margin-bottom: 22px; }
+
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 9px; border-radius: 20px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em;
+}
+.badge-genre    { background: var(--green-bg);  color: #059076; }
+.badge-tone     { background: var(--yellow-bg); color: #b07a00; }
+.badge-type     { background: #f0eeff;          color: var(--accent2); }
+.badge-digital  { background: var(--primary-light); color: var(--primary); }
+.badge-physical { background: var(--bg2);       color: var(--ink2); }
+.badge-id       { background: var(--bg2); color: var(--ink3); font-family: monospace; font-size: 0.72rem; padding: 2px 7px; border-radius: 4px; }
+
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--ink); color: white;
+  padding: 12px 20px; border-radius: var(--radius);
+  font-size: 0.84rem; z-index: 9999;
+  border-left: 4px solid var(--primary);
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.25s ease; max-width: 360px; font-weight: 500;
+}
+.toast.error   { border-left-color: var(--red); }
+.toast.success { border-left-color: var(--green); }
+@keyframes slideIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15,21,35,0.55);
+  z-index: 500; display: flex; align-items: center; justify-content: center; padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.modal {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal h3 { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 20px; color: var(--ink); }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+/* Inline select with + button */
+.select-inline { display: flex; gap: 6px; align-items: center; }
+.select-inline select { flex: 1; }
+.btn-inline-add {
+  flex-shrink: 0; background: var(--primary-light); color: var(--primary);
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  padding: 8px 10px; font-size: 0.82rem; font-weight: 700;
+  transition: all 0.15s; white-space: nowrap;
+}
+.btn-inline-add:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* ── LOGIN ── */
+#login-screen {
+  display: flex; align-items: center; justify-content: center; min-height: 100vh;
+  background: linear-gradient(135deg, #4361ee 0%, #7209b7 50%, #f72585 100%);
+}
+.login-box {
+  background: white; border-radius: 16px; padding: 48px 40px;
+  width: 380px; box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+}
+.login-logo { text-align: center; margin-bottom: 32px; }
+.login-logo h1 { font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; color: var(--primary); }
+.login-logo p { color: var(--ink3); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 2px; }
+#login-error { color: var(--red); font-size: 0.82rem; margin-top: 8px; text-align: center; min-height: 20px; }
+#btn-login {
+  width: 100%; margin-top: 6px; padding: 11px;
+  background: linear-gradient(90deg, var(--primary), var(--accent2));
+  color: white; border: none; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em;
+  transition: opacity 0.15s; font-family: var(--font);
+}
+#btn-login:hover { opacity: 0.9; }
+.guest-link { text-align: center; margin-top: 16px; font-size: 0.82rem; color: var(--ink3); }
+
+/* ── MAM BROWSER ── */
+#mam-layout { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; }
+
+/* Obras list */
+#obras-list-wrap {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.obras-list-header {
+  padding: 14px 16px; border-bottom: 1.5px solid var(--border);
+  font-weight: 700; font-size: 0.82rem; color: var(--ink2);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg);
+}
+#obras-list { overflow-y: auto; max-height: calc(100vh - 260px); }
+.obra-item {
+  padding: 11px 16px; border-bottom: 1px solid var(--bg2);
+  cursor: pointer; transition: background 0.1s;
+  display: flex; align-items: center; gap: 10px;
+}
+.obra-item:last-child { border-bottom: none; }
+.obra-item:hover { background: var(--bg); }
+.obra-item.selected { background: var(--primary-light); border-left: 3px solid var(--primary); }
+.obra-item .obra-id { font-family: monospace; font-size: 0.7rem; color: var(--ink3); background: var(--bg2); padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+.obra-item .obra-name { font-weight: 600; font-size: 0.88rem; flex: 1; }
+
+/* Search */
+.search-wrap { padding: 12px; border-bottom: 1.5px solid var(--border); }
+.search-wrap input { background: var(--bg); }
+
+/* Filters */
+.filters-bar {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 12px 16px; margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.filters-bar select { width: auto; min-width: 140px; font-size: 0.82rem; }
+
+/* Tree */
+.tree-empty {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 320px; color: var(--ink3);
+  font-size: 0.95rem; flex-direction: column; gap: 12px;
+}
+.tree-empty .big-icon { font-size: 3rem; opacity: 0.25; }
+
+/* Level label strip on the left */
+.tree-node { border-radius: var(--radius-sm); margin-bottom: 6px; display: flex; gap: 0; align-items: stretch; }
+.tree-level-tag {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 0.58rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: white;
+  padding: 8px 0; border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  flex: 0 0 18px; width: 18px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.85; user-select: none; align-self: stretch;
+  pointer-events: none;
+}
+.level-version  > .tree-level-tag { background: var(--primary); }
+.level-arreglo  > .tree-level-tag { background: var(--accent); color: #1a1a2e; }
+.level-copia    > .tree-level-tag { background: #7c3aed; }
+.level-soporte  > .tree-level-tag { background: #0ea5e9; }
+.tree-node-inner { flex: 1; min-width: 0; }
+
+.tree-node-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; cursor: pointer;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  transition: background 0.1s; user-select: none;
+}
+.tree-node-header:hover { background: var(--bg); }
+.tree-toggle { font-size: 0.65rem; color: var(--ink3); width: 14px; text-align: center; transition: transform 0.15s; }
+.tree-toggle.open { transform: rotate(90deg); }
+.tree-label { flex: 1; min-width: 0; }
+.tree-label .name { font-weight: 600; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tree-label .meta { font-size: 0.74rem; color: var(--ink3); margin-top: 1px; }
+.tree-actions { display: none; gap: 4px; flex-shrink: 0; }
+.tree-node-header:hover .tree-actions { display: flex; }
+.tree-children { padding-left: 20px; border-left: 2px solid var(--border); margin-left: 38px; margin-top: 4px; }
+
+/* Level backgrounds */
+.level-version  > .tree-node-inner > .tree-node-header { background: var(--primary-light); border: 1px solid var(--border); border-left: none; }
+.level-version  > .tree-node-inner > .tree-node-header:hover { background: #e0e8ff; }
+.level-arreglo  > .tree-node-inner > .tree-node-header { background: var(--surface); border: 1px solid var(--border); border-left: none; }
+.level-copia    > .tree-node-inner > .tree-node-header { background: var(--bg); }
+.level-soporte  > .tree-node-inner > .tree-node-header { background: transparent; padding: 6px 10px; }
+
+/* Arreglo genre+tone — displayed prominently */
+.arreglo-identity {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 3px;
+}
+.arreglo-genre {
+  font-size: 0.78rem; font-weight: 800; color: var(--accent);
+  background: rgba(6,214,160,0.12); border: 1.5px solid rgba(6,214,160,0.35);
+  padding: 2px 9px; border-radius: 20px; letter-spacing: 0.02em;
+}
+.arreglo-tone {
+  font-size: 0.78rem; font-weight: 800; color: var(--primary);
+  background: rgba(67,97,238,0.1); border: 1.5px solid rgba(67,97,238,0.3);
+  padding: 2px 9px; border-radius: 20px; letter-spacing: 0.02em;
+}
+.arreglo-dur {
+  font-size: 0.72rem; color: var(--ink3);
+  background: var(--bg2); padding: 2px 7px; border-radius: 20px;
+}
+
+.soporte-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 5px; transition: box-shadow 0.1s;
+}
+.soporte-row:hover { box-shadow: var(--shadow-sm); }
+.soporte-info { flex: 1; font-size: 0.8rem; min-width: 0; }
+.soporte-name { font-weight: 600; }
+.soporte-path { color: var(--ink3); font-family: monospace; font-size: 0.7rem; word-break: break-all; }
+.soporte-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+/* ── CONCIERTOS ── */
+#conciertos-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
+.concierto-item {
+  padding: 12px 16px; border-bottom: 1px solid var(--bg2);
+  cursor: pointer; transition: background 0.1s;
+}
+.concierto-item:hover { background: var(--bg); }
+.concierto-item.selected { background: var(--primary-light); border-left: 3px solid var(--primary); }
+.concierto-item .c-nombre { font-weight: 700; font-size: 0.88rem; }
+.concierto-item .c-fecha { font-size: 0.72rem; color: var(--ink3); font-family: monospace; margin-top: 2px; }
+.concierto-item .c-venue { font-size: 0.76rem; color: var(--ink3); }
+
+.programa-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+.programa-table th {
+  background: var(--bg); padding: 8px 12px; text-align: left;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--ink3); border-bottom: 1.5px solid var(--border); font-weight: 700;
+}
+.programa-table td { padding: 10px 12px; border-bottom: 1px solid var(--bg2); vertical-align: middle; }
+.programa-table tr:hover td { background: var(--bg); }
+.dur-total {
+  background: var(--primary-light); padding: 8px 16px; border-radius: var(--radius-sm);
+  font-size: 0.83rem; color: var(--primary); font-weight: 700;
+  display: inline-block; margin-top: 12px;
+}
+.recording-card {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent2) 100%);
+  color: white; border-radius: var(--radius); padding: 18px 22px; margin-top: 16px;
+}
+.recording-card h4 { font-family: var(--font-display); margin-bottom: 12px; opacity: 0.95; }
+.recording-card audio, .recording-card video { width: 100%; border-radius: var(--radius-sm); margin-top: 6px; }
+
+/* ── ADMIN ── */
+.lookup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.lookup-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.lookup-card-header {
+  background: var(--bg); padding: 10px 16px;
+  font-weight: 700; font-size: 0.8rem; color: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.lookup-list { list-style: none; max-height: 190px; overflow-y: auto; }
+.lookup-list li {
+  padding: 7px 16px; border-bottom: 1px solid var(--bg2);
+  font-size: 0.82rem; display: flex; align-items: center; justify-content: space-between;
+}
+.lookup-list li:last-child { border-bottom: none; }
+.lookup-list li:hover { background: var(--bg); }
+
+.users-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+.users-table th { background: var(--bg); padding: 9px 12px; text-align: left; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink3); font-weight: 700; }
+.users-table td { padding: 10px 12px; border-bottom: 1px solid var(--bg2); }
+.users-table tr:hover td { background: var(--bg); }
+.role-pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+.role-admin  { background: #fdedf0; color: var(--red); }
+.role-editor { background: var(--green-bg); color: #059076; }
+.role-reader { background: var(--primary-light); color: var(--primary); }
+.role-guest  { background: var(--bg2); color: var(--ink3); }
+
+/* ── PLAYER ── */
+#player-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--ink); border-top: 2px solid var(--primary);
+  padding: 10px 24px; display: none; align-items: center; gap: 16px; z-index: 200;
+}
+#player-bar.visible { display: flex; }
+#player-title { color: white; font-size: 0.83rem; min-width: 180px; }
+#player-title strong { display: block; color: var(--accent); font-family: var(--font-display); }
+#player-audio { flex: 1; height: 34px; accent-color: var(--primary); }
+#player-close { background: none; border: none; color: white; font-size: 1.1rem; opacity: 0.5; }
+#player-close:hover { opacity: 1; }
+body.player-open #main { padding-bottom: 80px; }
+
+/* PDF side panel */
+#pdf-panel {
+  position: fixed; top: 58px; right: 0; bottom: 0;
+  width: 48vw; min-width: 360px; max-width: 860px;
+  background: var(--surface); border-left: 2px solid var(--border);
+  box-shadow: -8px 0 32px rgba(67,97,238,0.12);
+  display: flex; flex-direction: column; z-index: 400;
+  transform: translateX(110%); transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+}
+#pdf-panel.open { transform: translateX(0); }
+#pdf-panel-toolbar {
+  background: var(--bg); border-bottom: 1.5px solid var(--border);
+  padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+#pdf-panel-title { flex: 1; font-size: 0.85rem; font-weight: 700; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pdf-panel iframe { flex: 1; border: none; }
+#pdf-panel #panel-img-wrap { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; background: #1a1a2e; padding: 16px; }
+#pdf-panel #panel-img-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+#pdf-panel #panel-video-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: #1a1a2e; flex-direction: column; gap: 16px; }
+#pdf-panel #panel-video-wrap video { max-width: 100%; max-height: 80%; }
+#pdf-panel #panel-video-wrap audio { width: 90%; }
+/* Push main content left when panel is open */
+body.pdf-open #app { margin-right: 48vw; transition: margin-right 0.28s cubic-bezier(.4,0,.2,1); }
+@media (max-width: 900px) {
+  #pdf-panel { width: 100vw; min-width: unset; top: 58px; }
+  body.pdf-open #app { margin-right: 0; }
+}
+
+/* Video overlay */
+#video-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.94); z-index: 600; display: none; flex-direction: column; align-items: center; justify-content: center; }
+#video-overlay.visible { display: flex; }
+#video-player { max-width: 900px; width: 100%; max-height: 80vh; border-radius: var(--radius); }
+#btn-close-video { position: absolute; top: 20px; right: 24px; background: none; border: none; color: white; font-size: 1.8rem; opacity: 0.6; }
+#btn-close-video:hover { opacity: 1; }
+
+/* Loading */
+.loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--ink3); gap: 10px; font-style: italic; }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); border-top-color: var(--primary); animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Upload progress */
+.upload-progress { margin-top: 12px; display: none; }
+.upload-progress.visible { display: block; }
+.upload-bar-track { background: var(--bg2); border-radius: 20px; height: 8px; overflow: hidden; margin-bottom: 6px; }
+.upload-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 20px; width: 0%; transition: width 0.2s; }
+.upload-label { font-size: 0.78rem; color: var(--ink2); font-weight: 600; text-align: center; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <h1>TUTB</h1>
+      <p>Artxiboa</p>
+    </div>
+    <div class="field">
+      <label>Erabiltzailea</label>
+      <input type="text" id="login-user" placeholder="username" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>Pasahitza</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div id="login-error"></div>
+    <div id="login-change-pw" style="display:none;margin-top:6px;text-align:center">
+      <a href="#" id="btn-show-change-pw" style="font-size:0.8rem;color:var(--primary)">Pasahitza aldatu →</a>
+    </div>
+    <button id="btn-login">Sartu →</button>
+    <div class="guest-link"><a href="#" id="btn-guest">Bisitari gisa sartu</a></div>
+    <!-- Change password form (hidden by default) -->
+    <div id="change-pw-form" style="display:none;margin-top:18px;border-top:1.5px solid var(--border);padding-top:18px">
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:12px;color:var(--ink2)">🔑 Pasahitza aldatu</div>
+      <div class="field"><label>Erabiltzailea</label><input type="text" id="cpw-user" placeholder="username"></div>
+      <div class="field"><label>Pasahitz zaharra</label><input type="password" id="cpw-old" placeholder="••••••••"></div>
+      <div class="field"><label>Pasahitz berria</label><input type="password" id="cpw-new" placeholder="••••••••"></div>
+      <div class="field"><label>Berretsi</label><input type="password" id="cpw-new2" placeholder="••••••••"></div>
+      <div id="cpw-error" style="color:var(--red);font-size:0.8rem;min-height:18px;margin-bottom:8px"></div>
+      <button id="btn-change-pw" style="width:100%;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);padding:11px;font-weight:700;cursor:pointer">Aldatu →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+  <header id="header">
+    <div class="logo">TUTB<span class="dot">·</span></div>
+    <nav id="nav">
+      <button data-page="bista" class="active">🏠 Nabigatu</button>
+      <button data-page="mam">🎼 Zuhaitz orokorra</button>
+      <button data-page="conciertos">🎵 Kontzertuak</button>
+      <button data-page="admin" id="nav-admin" style="display:none">⚙️ Admin</button>
+    </nav>
+    <div id="user-area">
+      <span class="username" id="header-username"></span>
+      <span class="role-badge" id="header-role"></span>
+      <button id="btn-logout">Irten</button>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- BISTA NAGUSIA -->
+    <section id="page-bista">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div class="page-title">🏠 Nabigatu</div>
+          <p class="page-subtitle" style="margin-bottom:0">Aurkitu partiturak filtroak erabiliz</p>
+        </div>
+        <span id="bista-count" style="color:var(--ink3);font-size:0.83rem;align-self:center"></span>
+      </div>
+
+      <!-- FILTROS -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:12px">
+          <div class="field" style="margin:0">
+            <label>🔍 Izenburua</label>
+            <input type="text" id="f-q" placeholder="Bilatu izenburuaren arabera...">
+          </div>
+          <div class="field" style="margin:0">
+            <label>🎭 Generoa</label>
+            <select id="f-genero"><option value="">— Guztiak —</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>🎵 Tonalitatea</label>
+            <select id="f-tonalidad"><option value="">— Guztiak —</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>🎻 Moldatzailea</label>
+            <select id="f-arreglista"><option value="">— Guztiak —</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>🎼 Konpositorea</label>
+            <select id="f-compositor"><option value="">— Guztiak —</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>🎺 Instrumentua</label>
+            <select id="f-instrumento"><option value="">— Guztiak —</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>📌 Erabilera-testuingurua</label>
+            <select id="f-context"><option value="">— Guztiak —</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>📦 Kokalekua</label>
+            <select id="f-ubicacion"><option value="">— Guztiak —</option></select>
+          </div>
+          <div class="field" style="margin:0">
+            <label>📅 Urtea (nondik)</label>
+            <input type="number" id="f-anyo-min" placeholder="1900">
+          </div>
+          <div class="field" style="margin:0">
+            <label>📅 Urtea (nora)</label>
+            <input type="number" id="f-anyo-max" placeholder="2024">
+          </div>
+          <div class="field" style="margin:0">
+            <label>⏱ Iraupena min (MM:SS)</label>
+            <input type="text" id="f-dur-min" placeholder="02:00">
+          </div>
+          <div class="field" style="margin:0">
+            <label>⏱ Iraupena max (MM:SS)</label>
+            <input type="text" id="f-dur-max" placeholder="10:00">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" id="btn-bista-search">🔍 Bilatu</button>
+          <button class="btn btn-secondary" id="btn-bista-clear">✕ Garbitu</button>
+        </div>
+      </div>
+
+      <!-- RESULTADOS -->
+      <div id="bista-results">
+        <div class="tree-empty" style="min-height:200px">
+          <span class="big-icon">🔍</span>
+          Bilatu partiturak goiko filtroetan
+        </div>
+      </div>
+    </section>
+
+    <!-- MAM BROWSER -->
+    <section id="page-mam">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div class="page-title">🎼 Zuhaitz orokorra</div>
+          <p class="page-subtitle" style="margin-bottom:0">Zuhaitz ikuspegia</p>
+        </div>
+        <button class="btn btn-primary" id="btn-new-obra" style="display:none">+ Obra berria</button>
+      </div>
+
+
+      <div id="mam-layout">
+        <div>
+          <div id="obras-list-wrap">
+            <div class="obras-list-header">
+              Obrak
+              <span id="obras-count" style="color:var(--ink3);font-weight:400"></span>
+            </div>
+            <div class="search-wrap">
+              <input type="text" id="search-obra" placeholder="🔍 Bilatu...">
+            </div>
+            <div id="obras-list"></div>
+          </div>
+        </div>
+        <div>
+          <div id="tree-empty" class="card">
+            <div class="tree-empty">
+              <span class="big-icon">🎵</span>
+              Hautatu obra bat zerrendatik
+            </div>
+          </div>
+          <div id="tree-content" style="display:none"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KONTZERTOAK -->
+    <section id="page-conciertos" style="display:none">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div class="page-title">🎵 Kontzertuak</div>
+          <p class="page-subtitle" style="margin-bottom:0">Emanaldien historia eta programak</p>
+        </div>
+        <button class="btn btn-primary" id="btn-new-concierto" style="display:none">+ Kontzertu berria</button>
+      </div>
+      <div id="conciertos-layout">
+        <div>
+          <div id="obras-list-wrap" style="margin:0">
+            <div class="obras-list-header">Kontzertuak</div>
+            <div id="conciertos-list"></div>
+          </div>
+        </div>
+        <div id="concierto-detail">
+          <div class="card">
+            <div class="tree-empty">
+              <span class="big-icon">🎤</span>
+              Hautatu kontzertua
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="page-admin" style="display:none">
+      <div class="page-title" style="margin-bottom:6px">⚙️ Administrazioa</div>
+      <p class="page-subtitle">Katalogoak eta erabiltzaileak kudeatu</p>
+
+      <h3 style="font-size:1rem;margin-bottom:12px;color:var(--ink2)">Katalogoak</h3>
+      <div class="lookup-grid" id="lookup-grid"></div>
+
+      <h3 style="font-size:1rem;margin:28px 0 12px;color:var(--ink2)" id="users-section-title">Erabiltzaileak</h3>
+      <div id="users-section">
+        <button class="btn btn-primary btn-sm" id="btn-new-user" style="margin-bottom:12px">+ Erabiltzaile berria</button>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="users-table">
+            <thead><tr><th>Erabiltzailea</th><th>Email</th><th>Rola</th><th>Aktibo</th><th></th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <h3 style="font-size:1rem;margin:28px 0 12px;color:var(--ink2)">📦 Datu-basearen babeskopia</h3>
+      <div class="card" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;padding:20px">
+        <div>
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:6px">⬇ Esportatu</div>
+          <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:10px">Datu-base osoa .sql fitxategi gisa deskargatu</div>
+          <button class="btn btn-primary btn-sm" onclick="exportBackup()">⬇ Deskargatu babeskopia</button>
+        </div>
+        <div style="border-left:1.5px solid var(--border);padding-left:24px">
+          <div style="font-weight:700;font-size:0.85rem;margin-bottom:6px">⬆ Inportatu</div>
+          <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:10px">Aurretik esportatutako .sql fitxategi bat inportatu<br><span style="color:#b45309;font-weight:600">⚠ Datu guztiak ordezkatuko dira</span></div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <input type="file" id="import-file" accept=".sql" style="font-size:0.75rem">
+            <button class="btn btn-danger btn-sm" onclick="importBackup()">⬆ Inportatu</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- PLAYER -->
+<div id="player-bar">
+  <div id="player-title"><strong id="player-obra-name">—</strong><span id="player-soporte-type"></span></div>
+  <audio id="player-audio" controls></audio>
+  <button id="player-close">✕</button>
+</div>
+
+<!-- PDF -->
+<!-- PDF / IMAGE / VIDEO SIDE PANEL -->
+<div id="pdf-panel">
+  <div id="pdf-panel-toolbar">
+    <span id="pdf-panel-title">—</span>
+    <a class="btn btn-secondary btn-sm" id="btn-download-pdf" download>⬇ Deskargatu</a>
+    <a class="btn btn-secondary btn-sm" id="btn-newtab-pdf" target="_blank">↗ Ireki</a>
+    <button class="btn btn-danger btn-sm" id="btn-close-pdf">✕ Itxi</button>
+  </div>
+  <iframe id="pdf-iframe" src="" style="display:none;flex:1;border:none"></iframe>
+  <div id="panel-img-wrap" style="display:none"><img id="panel-img" src="" alt=""></div>
+  <div id="panel-video-wrap" style="display:none"><video id="panel-video" controls style="display:none"></video><audio id="panel-audio" controls style="display:none"></audio></div>
+</div>
+
+<!-- VIDEO -->
+<div id="video-overlay">
+  <button id="btn-close-video">✕</button>
+  <video id="video-player" controls></video>
+</div>
+
+<div id="modal-container"></div>
+
+<script>
+const API = 'https://tutb.txistufly.org/api';
+
+let state = {
+  token: localStorage.getItem('tutb_token'),
+  user:  JSON.parse(localStorage.getItem('tutb_user') || 'null'),
+  obras: [], generos: [], conciertos: [],
+  selectedObra: null, selectedConcierto: null,
+};
+let lookups = {};
+
+// ── API ──
+async function apiFetch(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+  const res = await fetch(API + path, { headers, ...opts });
+  if (res.status === 401 && path !== '/auth/login') { logout(); return null; }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
+const apiGet    = p       => apiFetch(p);
+const apiPost   = (p, b)  => apiFetch(p, { method:'POST',   body: JSON.stringify(b) });
+const apiPut    = (p, b)  => apiFetch(p, { method:'PUT',    body: JSON.stringify(b) });
+const apiDelete = p       => apiFetch(p, { method:'DELETE' });
+function apiUpload(path, fd, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', API + path);
+    if (state.token) xhr.setRequestHeader('Authorization', `Bearer ${state.token}`);
+    xhr.upload.onprogress = e => {
+      if (e.lengthComputable && onProgress) onProgress(Math.round(e.loaded / e.total * 100));
+    };
+    xhr.onload = () => {
+      let data = {};
+      try { data = JSON.parse(xhr.responseText); } catch {}
+      if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+      else reject(new Error(data.error || `HTTP ${xhr.status}`));
+    };
+    xhr.onerror = () => reject(new Error('Sareko errorea'));
+    xhr.send(fd);
+  });
+}
+
+// ── TOAST ──
+function toast(msg, type = 'info') {
+  const t = document.createElement('div');
+  t.className = `toast ${type}`; t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+// ── MODAL ──
+function openModal(title, bodyHTML, onSave) {
+  document.getElementById('modal-container').innerHTML = `
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal">
+        <h3>${title}</h3>
+        <div id="modal-body">${bodyHTML}</div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="btn-modal-cancel">Utzi</button>
+          ${onSave ? '<button class="btn btn-primary" id="btn-modal-save">Gorde</button>' : ''}
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('btn-modal-cancel').onclick = closeModal;
+  document.getElementById('modal-overlay').onclick = e => { if(e.target.id==='modal-overlay') closeModal(); };
+  if (onSave) document.getElementById('btn-modal-save').onclick = onSave;
+}
+function closeModal() { document.getElementById('modal-container').innerHTML = ''; }
+
+// ── INLINE SELECT WITH + ──
+function inlineSelect(name, items, idField, labelField, currentVal = '') {
+  const opts = items.map(i =>
+    `<option value="${i[idField]}" ${i[idField]==currentVal?'selected':''}>${i.nombre}</option>`
+  ).join('');
+  return `
+    <div class="select-inline">
+      <select name="${name}">
+        <option value="">— Hautatu —</option>
+        ${opts}
+      </select>
+      <button type="button" class="btn-inline-add" onclick="inlineAdd('${name}')">+ Berria</button>
+    </div>`;
+}
+
+// Lookup keys per select name
+const LOOKUP_FOR = {
+  compositor_id:    'compositores',
+  arreglista_id:    'arreglistas',
+  tonalidad_id:     'tonalidades',
+  genero_id:        'generos',
+  tipo_copia_id:    'tipos-copia',
+  tipo_soporte_id:  'tipos-soporte',
+  ubicacion_id:     'ubicaciones',
+  idioma_id:        'idiomas',
+  context_id:       'contextos',
+};
+const LOOKUP_LABELS_EU = {
+  compositores:  'Konpositorea',
+  arreglistas:   'Moldatzailea',
+  tonalidades:   'Tonalitatea',
+  generos:       'Generoa',
+  'tipos-copia': 'Kopia mota',
+  'tipos-soporte':'Euskarri mota',
+  ubicaciones:   'Kokalekua',
+  idiomas:       'Hizkuntza',
+  contextos:     'Erabilera-testuingurua',
+};
+
+async function inlineAdd(selectName) {
+  const lookupKey = LOOKUP_FOR[selectName];
+  if (!lookupKey) return;
+  const label = LOOKUP_LABELS_EU[lookupKey] || lookupKey;
+  const nombre = prompt(`${label} berria:`);
+  if (!nombre || !nombre.trim()) return;
+  try {
+    const body = { nombre: nombre.trim() };
+    if (lookupKey === 'idiomas') body.codigo = prompt('Kodea (eu, es, fr...):') || '';
+    await apiPost(`/lookups/${lookupKey}`, body);
+    await loadLookups();
+    // update the select in the current modal
+    const sel = document.querySelector(`[name="${selectName}"]`);
+    if (sel) {
+      const items = lookups[lookupKey] || [];
+      const idField = Object.keys(items[0] || {}).find(k => k.endsWith('_id')) || 'id';
+      sel.innerHTML = `<option value="">— Hautatu —</option>` +
+        items.map(i => `<option value="${i[idField]}">${i.nombre}</option>`).join('');
+      // select the new one
+      const newItem = items.find(i => i.nombre === nombre.trim());
+      if (newItem) sel.value = newItem[idField];
+    }
+    toast(`${nombre} gehituta ✓`, 'success');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ── AUTH ──
+const canEdit = () => state.user && ['admin','editor'].includes(state.user.role);
+const isAdmin = () => state.user && state.user.role === 'admin';
+
+function setUser(token, user) {
+  state.token = token; state.user = user;
+  token ? localStorage.setItem('tutb_token', token) : localStorage.removeItem('tutb_token');
+  user  ? localStorage.setItem('tutb_user', JSON.stringify(user)) : localStorage.removeItem('tutb_user');
+}
+function logout() {
+  setUser(null, null);
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('header-username').textContent = state.user?.username || 'Bisitaria';
+  document.getElementById('header-role').textContent     = state.user?.role || 'guest';
+  document.getElementById('nav-admin').style.display     = canEdit() ? '' : 'none';
+  document.getElementById('btn-new-obra').style.display      = canEdit() ? '' : 'none';
+  document.getElementById('btn-new-concierto').style.display = canEdit() ? '' : 'none';
+  initApp();
+}
+
+document.getElementById('btn-login').onclick = async () => {
+  document.getElementById('login-error').textContent = '';
+  document.getElementById('login-change-pw').style.display = 'block';
+  try {
+    const data = await apiPost('/auth/login', {
+      username: document.getElementById('login-user').value.trim(),
+      password: document.getElementById('login-pass').value,
+    });
+    if (!data) return;
+    setUser(data.token, { usuario_id: data.usuario_id, username: data.username, role: data.role });
+    showApp();
+  } catch(e) {
+    document.getElementById('login-error').textContent = e.message;
+  }
+}
+document.getElementById('btn-show-change-pw').onclick = e => {
+  e.preventDefault();
+  const form = document.getElementById('change-pw-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  if (form.style.display === 'block') {
+    document.getElementById('cpw-user').value = document.getElementById('login-user').value;
+  }
+};
+document.getElementById('btn-change-pw').onclick = async () => {
+  const errEl = document.getElementById('cpw-error');
+  errEl.textContent = '';
+  const user  = document.getElementById('cpw-user').value.trim();
+  const oldPw = document.getElementById('cpw-old').value;
+  const newPw = document.getElementById('cpw-new').value;
+  const conf  = document.getElementById('cpw-new2').value;
+  if (!user || !oldPw || !newPw) { errEl.textContent = 'Bete eremu guztiak'; return; }
+  if (newPw !== conf) { errEl.textContent = 'Pasahitz berriak ez datoz bat'; return; }
+  if (newPw.length < 6) { errEl.textContent = 'Pasahitzak 6 karaktere behar ditu gutxienez'; return; }
+  try {
+    // Login first to get token, then change password
+    const loginData = await apiPost('/auth/login', { username: user, password: oldPw });
+    const tempToken = loginData.token;
+    const res = await fetch(API + '/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tempToken}` },
+      body: JSON.stringify({ current_password: oldPw, new_password: newPw })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Errorea');
+    document.getElementById('change-pw-form').style.display = 'none';
+    document.getElementById('login-change-pw').style.display = 'none';
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('login-pass').value = newPw;
+    toast('Pasahitza aldatuta ✓ — Sartu orain', 'success');
+  } catch(e) { errEl.textContent = e.message; }
+};
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('btn-login').click(); });
+document.getElementById('btn-guest').onclick = e => { e.preventDefault(); setUser(null, { username:'Bisitaria', role:'guest' }); showApp(); };
+document.getElementById('btn-logout').onclick = logout;
+
+// ── NAV ──
+document.querySelectorAll('#nav button[data-page]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#main section').forEach(s => s.style.display = 'none');
+    document.getElementById('page-' + btn.dataset.page).style.display = '';
+    // Always refresh shared data on tab switch
+    loadLookups();
+    loadObras(document.getElementById('search-input')?.value.trim() || '');
+    allArreglosForSelect = []; // invalidate pareja cache
+    if (btn.dataset.page === 'admin')      loadAdmin();
+    if (btn.dataset.page === 'conciertos') loadConciertos();
+    if (btn.dataset.page === 'bista')      initBista();
+    if (btn.dataset.page === 'mam' && state.selectedObra)
+      selectObra(state.selectedObra.obra_id);
+  };
+});
+
+// ── INIT ──
+async function initApp() {
+  // Erakutsi Nabigatu lehenetsita
+  document.querySelectorAll('#main section').forEach(s => s.style.display = 'none');
+  document.getElementById('page-bista').style.display = '';
+  await loadLookups();
+  populateBistaFilters();
+  await loadObras();
+  loadConciertos();
+}
+
+// ── LOOKUPS ──
+async function loadLookups() {
+  const keys = ['generos','tonalidades','tipos-copia','tipos-soporte','idiomas','compositores','arreglistas','ubicaciones','instrumentos','contextos'];
+  const results = await Promise.all(keys.map(k => apiGet(`/lookups/${k}`).catch(()=>[])));
+  keys.forEach((k, i) => lookups[k] = results[i] || []);
+}
+
+// ── OBRAS LIST ──
+async function loadObras(q = '') {
+  const list = document.getElementById('obras-list');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const url = q ? `/obras?q=${encodeURIComponent(q)}` : '/obras';
+    state.obras = await apiGet(url) || [];
+    document.getElementById('obras-count').textContent = `${state.obras.length} obra`;
+    renderObrasList();
+  } catch(e) {
+    list.innerHTML = `<div class="loading" style="color:var(--red)">${e.message}</div>`;
+  }
+}
+function renderObrasList() {
+  const list = document.getElementById('obras-list');
+  if (!state.obras.length) {
+    list.innerHTML = '<div class="loading">Ez da aurkitu</div>'; return;
+  }
+  list.innerHTML = state.obras.map(o => `
+    <div class="obra-item ${state.selectedObra?.obra_id===o.obra_id?'selected':''}"
+         data-id="${o.obra_id}" onclick="selectObra(${o.obra_id})">
+      <span class="obra-id">#${o.obra_id}</span>
+      <span class="obra-name">${o.title}</span>
+      ${canEdit() ? `<button class="btn-ghost btn-xs" onclick="event.stopPropagation();editObra(${o.obra_id})" title="Editatu">✏️</button>` : ''}
+    </div>`).join('');
+}
+
+async function selectObra(obra_id) {
+  document.querySelectorAll('.obra-item').forEach(el =>
+    el.classList.toggle('selected', parseInt(el.dataset.id)===obra_id));
+  document.getElementById('tree-empty').style.display = 'none';
+  const tc = document.getElementById('tree-content');
+  tc.style.display = ''; tc.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const tree = await apiGet(`/obras/${obra_id}/tree`);
+    state.selectedObra = tree;
+    renderTree(tree);
+  } catch(e) {
+    tc.innerHTML = `<div class="loading" style="color:var(--red)">${e.message}</div>`;
+  }
+}
+
+// ── TREE ──
+function renderTree(obra) {
+  document.getElementById('tree-content').innerHTML = `
+    <div class="card" style="margin-bottom:14px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="badge badge-id">#${obra.obra_id}</span>
+          <span style="font-family:var(--font-display);font-size:1.4rem;color:var(--primary);font-weight:800">${obra.title}</span>
+        </div>
+        ${obra.alt_titles?.length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+          ${obra.alt_titles.map(a=>`<span class="badge badge-type">${a.title}${a.idioma?` · ${a.idioma}`:''}</span>`).join('')}
+        </div>` : ''}
+      </div>
+      ${canEdit() ? `<div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-secondary btn-sm" onclick="addVersion(${obra.obra_id})">+ Bertsioa</button>
+        ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="deleteObra(${obra.obra_id})">🗑</button>` : ''}
+      </div>` : ''}
+    </div>
+    <div id="tree-versiones">
+      ${obra.versiones?.length
+        ? obra.versiones.map(v => renderVersion(v)).join('')
+        : '<div class="loading">Ez dago bertsiorik</div>'}
+    </div>`;
+}
+
+function renderVersion(v) {
+  return `
+  <div class="tree-node level-version">
+    <div class="tree-level-tag">Bertsioa</div>
+    <div class="tree-node-inner">
+      <div class="tree-node-header" onclick="toggleNode('ver-ch-${v.version_id}',this,event)">
+        <span class="tree-toggle open">▶</span>
+        <span>📄</span>
+        <div class="tree-label">
+          <div class="name">${v.compositor_nombre || 'Bertsioa'} <span class="badge-id">#${v.version_id}</span></div>
+          <div class="meta">${v.description||''}</div>
+        </div>
+        <div class="tree-actions">
+          ${canEdit() ? `
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();addArreglo(${v.version_id})">+ Moldaketa</button>
+            <button class="btn-ghost btn-sm" onclick="event.stopPropagation();editVersion(${v.version_id})">✏️</button>
+            ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteVersion(${v.version_id})">🗑</button>` : ''}
+          ` : ''}
+        </div>
+      </div>
+      <div class="tree-children" id="ver-ch-${v.version_id}">
+        ${v.arreglos?.length ? v.arreglos.map(a=>renderArreglo(a)).join('') : '<div style="padding:10px;font-size:0.8rem;color:var(--ink3)">Ez dago moldaketarik</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderArreglo(ar) {
+  const instrList = (ar.instrumentos||[]).map(i=>i.nombre).join(' · ');
+  return `
+  <div class="tree-node level-arreglo">
+    <div class="tree-level-tag">Moldaketa</div>
+    <div class="tree-node-inner">
+      <div class="tree-node-header" onclick="toggleNode('arr-ch-${ar.arreglo_id}',this,event)">
+        <span class="tree-toggle open">▶</span>
+        <span>🎼</span>
+        <div class="tree-label">
+          <div class="name">${ar.arreglista_nombre||'Moldaketa'} <span class="badge-id">#${ar.arreglo_id}</span> ${ar.anyo?`<span style="font-weight:400;color:var(--ink3)">(${ar.anyo})</span>`:''}</div>
+          <div class="arreglo-identity">
+            ${ar.genero_nombre    ? `<span class="arreglo-genre">♪ ${ar.genero_nombre}</span>` : ''}
+            ${ar.tonalidad_nombre ? `<span class="arreglo-tone">♩ ${ar.tonalidad_nombre}</span>` : ''}
+            ${ar.duracion         ? `<span class="arreglo-dur">⏱ ${ar.duracion}</span>` : ''}
+            ${instrList           ? `<span style="font-size:0.72rem;color:var(--ink3)">${instrList}</span>` : ''}
+            ${ar.context_nombre    ? `<span style="font-size:0.72rem;background:#fef3c7;color:#92400e;border-radius:4px;padding:1px 7px">📌 ${ar.context_nombre}</span>` : ''}
+            ${(ar.parejas||[]).length ? `<div style="margin-top:4px;font-size:0.72rem;color:var(--ink3)">🔗 ${ar.parejas.map(p=>`<span style="background:var(--bg2);border-radius:4px;padding:1px 6px;margin-right:3px">${p.obra_title} — ${p.arreglista_nombre||'?'}${p.genero_nombre?' ('+p.genero_nombre+')':''} #${p.arreglo_id}</span>`).join('')}</div>` : ''}
+          </div>
+        </div>
+        <div class="tree-actions">
+          ${canEdit() ? `
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();addCopia(${ar.arreglo_id})">+ Kopia</button>
+            <button class="btn-ghost btn-sm" onclick="event.stopPropagation();editArreglo(${ar.arreglo_id})">✏️</button>
+            ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteArreglo(${ar.arreglo_id})">🗑</button>` : ''}
+          ` : ''}
+        </div>
+      </div>
+      <div class="tree-children" id="arr-ch-${ar.arreglo_id}">
+        ${ar.copias?.length ? ar.copias.map(c=>renderCopia(c, ar.arreglo_id)).join('') : '<div style="padding:10px;font-size:0.8rem;color:var(--ink3)">Ez dago kopiarik</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCopia(cp, arreglo_id) {
+  return `
+  <div class="tree-node level-copia">
+    <div class="tree-level-tag">Kopia</div>
+    <div class="tree-node-inner">
+      <div class="tree-node-header" onclick="toggleNode('cop-ch-${cp.copia_id}',this,event)">
+        <span class="tree-toggle open">▶</span>
+        <span>📋</span>
+        <div class="tree-label">
+          <div class="name">${cp.tipo_copia_nombre||'Kopia'} <span class="badge-id">#${cp.copia_id}</span></div>
+          <div class="meta">${cp.concierto_nombre?`🎵 ${cp.concierto_nombre}`:''} ${cp.notas||''}</div>
+        </div>
+        <div class="tree-actions">
+          ${canEdit() ? `
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();addSoporte(${cp.copia_id},${arreglo_id||0})">+ Euskarria</button>
+            <button class="btn-ghost btn-sm" onclick="event.stopPropagation();editCopia(${cp.copia_id},${cp.arreglo_id})">✏️</button>
+            ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCopia(${cp.copia_id})">🗑</button>` : ''}
+          ` : ''}
+        </div>
+      </div>
+      <div class="tree-children" id="cop-ch-${cp.copia_id}">
+        ${cp.soportes?.length ? cp.soportes.map(s=>renderSoporte(s)).join('') : '<div style="padding:10px;font-size:0.8rem;color:var(--ink3)">Ez dago euskarririk</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderSoporte(s) {
+  const ext = getExt(s.file_path);
+  const src = s.file_path ? `${API}/media/${s.file_path}` : s.url_externa;
+  const isLocal = !!s.file_path;
+
+  let actions = '';
+  if (src) {
+    if (isLocal && AUDIO_EXTS.includes(ext))
+      actions += `<button class="btn btn-secondary btn-sm" onclick="openPanel('${src}','Audio')">🎵 Entzun</button>`;
+    else if (isLocal && (VIDEO_EXTS.includes(ext) || ext === 'pdf' || IMG_EXTS.includes(ext))) {
+      const icon = ext === 'pdf' ? '📄 PDF' : IMG_EXTS.includes(ext) ? '🖼 Irudia' : '▶ Bideoa';
+      actions += `<button class="btn btn-secondary btn-sm" onclick="openPanel('${src}','${icon}')">${icon}</button>`;
+    } else if (!isLocal && s.url_externa) {
+      const isYtVimeo = s.url_externa.match(/youtube|youtu\.be|vimeo/i);
+      actions += `<a class="btn btn-secondary btn-sm" href="${s.url_externa}" target="_blank" rel="noopener">${isYtVimeo ? '▶ Ikusi' : '🔗 Ireki'}</a>`;
+    }
+    if (isLocal)
+      actions += `<a class="btn btn-secondary btn-sm" href="${src}" download>⬇</a>`;
+  }
+  if (s.ubicacion_nombre) actions += `<span style="font-size:0.73rem;color:var(--ink3);padding:0 6px">📦 ${s.ubicacion_nombre}</span>`;
+  return `
+  <div class="tree-node level-soporte">
+    <div class="tree-level-tag">Euskarria</div>
+    <div class="tree-node-inner">
+      <div class="soporte-row" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0">
+        <span class="badge ${s.es_digital ? 'badge-digital':'badge-physical'}">${s.tipo_soporte_nombre||'?'}</span>
+        <div class="soporte-info">
+          <div class="soporte-name">
+            ${s.instrumento_nombre ? `<span class="badge badge-type" style="font-size:0.7rem;margin-right:4px">🎺 ${s.instrumento_nombre}</span>` : ''}
+            ${s.tipo_soporte_nombre||'Soporte'} ${s.created_date?`· ${s.created_date}`:''}
+          </div>
+          ${s.file_path   ? `<div class="soporte-path">📁 ${s.file_path}</div>` : ''}
+          ${s.url_externa ? `<div class="soporte-path">🌐 <a href="${s.url_externa}" target="_blank" style="color:var(--primary)">${s.url_externa}</a></div>` : ''}
+          ${s.creado_por  ? `<div style="font-size:0.7rem;color:var(--ink3)">👤 ${s.creado_por}</div>` : ''}
+        </div>
+        <div class="soporte-actions">
+          ${actions}
+          ${canEdit() ? `<button class="btn-ghost btn-sm" onclick="editSoporte(${s.soporte_id})">✏️</button>` : ''}
+          ${isAdmin() ? `<button class="btn btn-danger btn-sm" onclick="deleteSoporte(${s.soporte_id})">🗑</button>` : ''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleNode(childId, header, event) {
+  // Solo colapsar/expandir si el click fue en la flecha o en el header directamente
+  // (no en botones de acción)
+  if (event && event.target.closest('.tree-actions')) return;
+  if (event && event.target.closest('.btn')) return;
+  const ch = document.getElementById(childId); if(!ch) return;
+  const open = ch.style.display !== 'none';
+  ch.style.display = open ? 'none' : '';
+  header.querySelector('.tree-toggle').classList.toggle('open', !open);
+}
+function embedUrl(url) {
+  if (!url) return url;
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const vi = url.match(/vimeo\.com\/(\d+)/);
+  if (vi) return `https://player.vimeo.com/video/${vi[1]}`;
+  return url;
+}
+
+// ── SEARCH / FILTERS ──
+let searchTimer;
+document.getElementById('search-obra').oninput = e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadObras(e.target.value.trim()), 300);
+};
+
+// ── MEDIA ──
+function playAudio(src, label) {
+  document.getElementById('player-audio').src = src;
+  document.getElementById('player-soporte-type').textContent = label;
+  document.getElementById('player-obra-name').textContent = state.selectedObra?.title || '—';
+  document.getElementById('player-bar').classList.add('visible');
+  document.body.classList.add('player-open');
+  document.getElementById('player-audio').play();
+}
+document.getElementById('player-close').onclick = () => {
+  document.getElementById('player-audio').pause();
+  document.getElementById('player-bar').classList.remove('visible');
+  document.body.classList.remove('player-open');
+};
+const IMG_EXTS   = ['jpg','jpeg','png','gif','webp','bmp','tiff','tif','svg'];
+const VIDEO_EXTS = ['mp4','mov','webm','avi','mkv','m4v'];
+const AUDIO_EXTS = ['mp3','wav','ogg','flac','m4a','aac'];
+
+function getExt(path) { return (path||'').split('.').pop().toLowerCase(); }
+
+function openPanel(src, title) {
+  const ext = getExt(src.split('?')[0]);
+  const iframe    = document.getElementById('pdf-iframe');
+  const imgWrap   = document.getElementById('panel-img-wrap');
+  const videoWrap = document.getElementById('panel-video-wrap');
+  const img       = document.getElementById('panel-img');
+  const video     = document.getElementById('panel-video');
+
+  // Hide all slots first
+  iframe.style.display    = 'none'; iframe.src    = '';
+  imgWrap.style.display   = 'none'; img.src       = '';
+  videoWrap.style.display = 'none'; video.src     = ''; video.pause?.();
+
+  if (ext === 'pdf') {
+    iframe.style.display = 'flex'; iframe.style.flex = '1'; iframe.src = src;
+  } else if (IMG_EXTS.includes(ext)) {
+    imgWrap.style.display = 'flex'; img.src = src;
+  } else if (AUDIO_EXTS.includes(ext)) {
+    const aud = document.getElementById('panel-audio');
+    videoWrap.style.display = 'flex';
+    aud.style.display = 'block'; video.style.display = 'none';
+    aud.src = src; aud.load();
+  } else if (VIDEO_EXTS.includes(ext)) {
+    videoWrap.style.display = 'flex';
+    video.style.display = 'block';
+    document.getElementById('panel-audio').style.display = 'none';
+    video.src = src; video.load();
+  }
+
+  document.getElementById('pdf-panel-title').textContent = title || src.split('/').pop();
+  document.getElementById('btn-download-pdf').href = src;
+  document.getElementById('btn-newtab-pdf').href   = src;
+  document.getElementById('pdf-panel').classList.add('open');
+  document.body.classList.add('pdf-open');
+}
+// Keep openPdf as alias for backward compat (bista nagusia calls it)
+function openPdf(src, title) { openPanel(src, title); }
+function openMediaPanel(src, title) { openPanel(src, title); }
+
+document.getElementById('btn-close-pdf').onclick = () => {
+  document.getElementById('pdf-panel').classList.remove('open');
+  document.body.classList.remove('pdf-open');
+  setTimeout(() => {
+    document.getElementById('pdf-iframe').src = '';
+    document.getElementById('panel-img').src  = '';
+    const v = document.getElementById('panel-video'); v.pause?.(); v.src = '';
+    const a = document.getElementById('panel-audio'); a.pause?.(); a.src = '';
+  }, 300);
+};
+function playVideo(src) {
+  const v = document.getElementById('video-player');
+  const ov = document.getElementById('video-overlay');
+  if (src.includes('embed') || src.includes('vimeo.com/video')) {
+    v.style.display='none';
+    let fr = document.getElementById('video-iframe-embed');
+    if (!fr) { fr=document.createElement('iframe'); fr.id='video-iframe-embed'; fr.style.cssText='width:100%;max-width:900px;height:70vh;border:none;border-radius:10px'; ov.appendChild(fr); }
+    fr.src=src; fr.style.display='';
+  } else {
+    let fr=document.getElementById('video-iframe-embed'); if(fr){fr.src='';fr.style.display='none';}
+    v.style.display=''; v.src=src; v.play();
+  }
+  ov.classList.add('visible');
+}
+document.getElementById('btn-close-video').onclick = () => {
+  document.getElementById('video-overlay').classList.remove('visible');
+  document.getElementById('video-player').pause();
+  document.getElementById('video-player').src='';
+  const fr=document.getElementById('video-iframe-embed'); if(fr){fr.src='';fr.style.display='none';}
+};
+
+// ── CRUD OBRA ──
+document.getElementById('btn-new-obra').onclick = () => {
+  openModal('Obra berria', `
+    <div class="field"><label>Izenburua *</label><input id="m-title" placeholder="Obraren izena..."></div>
+  `, async () => {
+    const title = document.getElementById('m-title').value.trim();
+    if (!title) return toast('Izenburua beharrezkoa da', 'error');
+    try {
+      const r = await apiPost('/obras', { title });
+      closeModal(); toast('Obra sortuta ✓', 'success'); loadObras();
+      setTimeout(() => selectObra(r.obra_id), 400);
+    } catch(e) { toast(e.message, 'error'); }
+  });
+};
+function editObra(obra_id) {
+  const obra = state.obras.find(o => o.obra_id === obra_id); if (!obra) return;
+  openModal('Obra editatu', `
+    <div class="field"><label>Izenburua</label><input id="m-title" value="${obra.title}"></div>
+  `, async () => {
+    try {
+      await apiPut(`/obras/${obra_id}`, { title: document.getElementById('m-title').value.trim() });
+      closeModal(); toast('Eguneratuta ✓', 'success'); loadObras();
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+async function deleteObra(obra_id) {
+  if (!confirm('Obra eta bere eduki guztia ezabatu?')) return;
+  try {
+    await apiDelete(`/obras/${obra_id}`);
+    toast('Obra ezabatuta', 'success'); state.selectedObra=null;
+    document.getElementById('tree-empty').style.display='';
+    document.getElementById('tree-content').style.display='none';
+    loadObras();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ── CRUD VERSION ──
+function addVersion(obra_id) {
+  openModal('Bertsioa gehitu', `
+    <div class="field"><label>Konpositorea</label>${inlineSelect('compositor_id', lookups.compositores, 'compositor_id', 'nombre')}</div>
+    <div class="field"><label>Deskribapena (zergatik bertsio desberdina?)</label><textarea id="m-desc" rows="3" placeholder="Adib: melodia desberdina, beste iturri bat..."></textarea></div>
+  `, async () => {
+    try {
+      await apiPost('/versiones', {
+        obra_id,
+        compositor_id: document.querySelector('[name=compositor_id]').value || null,
+        description:   document.getElementById('m-desc').value.trim()
+      });
+      closeModal(); toast('Bertsioa sortuta ✓', 'success'); selectObra(obra_id);
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+function editVersion(version_id) {
+  const v = state.selectedObra?.versiones?.find(v=>v.version_id===version_id); if(!v) return;
+  openModal('Bertsioa editatu', `
+    <div class="field"><label>Konpositorea</label>${inlineSelect('compositor_id', lookups.compositores, 'compositor_id', 'nombre', v.compositor_id)}</div>
+    <div class="field"><label>Deskribapena</label><textarea id="m-desc" rows="3">${v.description||''}</textarea></div>
+  `, async () => {
+    try {
+      await apiPut(`/versiones/${version_id}`, {
+        compositor_id: document.querySelector('[name=compositor_id]').value || null,
+        description:   document.getElementById('m-desc').value.trim()
+      });
+      closeModal(); toast('Eguneratuta ✓', 'success'); selectObra(state.selectedObra.obra_id);
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+async function deleteVersion(version_id) {
+  if (!confirm('Bertsioa ezabatu?')) return;
+  try { await apiDelete(`/versiones/${version_id}`); toast('Ezabatuta','success'); selectObra(state.selectedObra.obra_id); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+// ── CRUD ARREGLO ──
+// Cache of all arreglos for the pareja selector
+let allArreglosForSelect = [];
+async function loadAllArreglosForSelect() {
+  if (!allArreglosForSelect.length)
+    allArreglosForSelect = await apiGet('/arreglos/all-for-select') || [];
+}
+
+function parejaSelectorHtml(currentIds = []) {
+  const opts = allArreglosForSelect.map(a => {
+    const label = `${a.obra_title} — ${a.arreglista_nombre||'?'}${a.genero_nombre?' ('+a.genero_nombre+')':''} #${a.arreglo_id}`;
+    const sel = currentIds.includes(a.arreglo_id) ? 'selected' : '';
+    return `<option value="${a.arreglo_id}" ${sel}>${label}</option>`;
+  }).join('');
+  return `<select id="m-parejas" multiple size="5" style="width:100%;font-size:0.8rem">${opts}</select>
+  <div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Ctrl+klik anizkoitzak hautatzeko / deselektatzeko</div>`;
+}
+
+function parejaSelectorGet() {
+  return Array.from(document.getElementById('m-parejas')?.selectedOptions||[]).map(o=>parseInt(o.value));
+}
+
+function addArreglo(version_id) {
+  loadAllArreglosForSelect().then(() => {
+  openModal('Moldaketa gehitu', `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><label>Moldatzailea</label>${inlineSelect('arreglista_id', lookups.arreglistas, 'arreglista_id', 'nombre')}</div>
+      <div class="field"><label>Urtea</label><input id="m-anyo" type="number" placeholder="1985"></div>
+      <div class="field"><label>Tonalitatea</label>${inlineSelect('tonalidad_id', lookups.tonalidades, 'tonalidad_id', 'nombre')}</div>
+      <div class="field"><label>Generoa</label>${inlineSelect('genero_id', lookups.generos, 'genero_id', 'nombre')}</div>
+      <div class="field"><label>Iraupena (MM:SS)</label><input id="m-dur" placeholder="03:45"></div>
+    </div>
+    <div class="field"><label>📌 Erabilera-testuingurua</label>${inlineSelect('context_id', lookups.contextos||[], 'context_id', 'nombre')}</div>
+    <div class="field"><label>🎺 Instrumentuak</label><div id="m-instr-selector"></div></div>
+    <div class="field"><label>🔗 Moldaketa parekatuak</label>${parejaSelectorHtml()}</div>
+  `, async () => {
+    const durVal = document.getElementById('m-dur').value.trim();
+    const durFormatted = durVal.match(/^\d+:\d{2}$/) ? `00:${durVal}` : durVal||null;
+    try {
+      const res = await apiPost('/arreglos', {
+        version_id,
+        arreglista_id:   document.querySelector('[name=arreglista_id]').value || null,
+        tonalidad_id:    document.querySelector('[name=tonalidad_id]').value  || null,
+        genero_id:       document.querySelector('[name=genero_id]').value     || null,
+        anyo:            document.getElementById('m-anyo').value || null,
+        context_id:      document.querySelector('[name=context_id]')?.value || null,
+        instrumento_ids: instrSelectorGet('m-instr-selector'),
+        duracion:        durFormatted
+      });
+      const parejas = parejaSelectorGet();
+      if (parejas.length) await apiPut(`/arreglos/${res.arreglo_id}/parejas`, { pareja_ids: parejas });
+      closeModal(); toast('Moldaketa sortuta ✓','success'); selectObra(state.selectedObra.obra_id);
+    } catch(e) { toast(e.message,'error'); }
+  });
+  instrSelectorInit('m-instr-selector', []);
+  });
+}
+
+function editArreglo(arreglo_id) {
+  let ar = null;
+  state.selectedObra?.versiones?.forEach(v => v.arreglos?.forEach(a => { if(a.arreglo_id===arreglo_id) ar=a; }));
+  loadAllArreglosForSelect().then(() => {
+  const currentParejaIds = (ar?.parejas||[]).map(p=>p.arreglo_id);
+  openModal('Moldaketa editatu', `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><label>Moldatzailea</label>${inlineSelect('arreglista_id', lookups.arreglistas, 'arreglista_id', 'nombre', ar?.arreglista_id)}</div>
+      <div class="field"><label>Urtea</label><input id="m-anyo" type="number" value="${ar?.anyo||''}"></div>
+      <div class="field"><label>Tonalitatea</label>${inlineSelect('tonalidad_id', lookups.tonalidades, 'tonalidad_id', 'nombre', ar?.tonalidad_id)}</div>
+      <div class="field"><label>Generoa</label>${inlineSelect('genero_id', lookups.generos, 'genero_id', 'nombre', ar?.genero_id)}</div>
+      <div class="field"><label>Iraupena (MM:SS)</label><input id="m-dur" value="${ar?.duracion?.substring(3)||''}"></div>
+    </div>
+    <div class="field"><label>📌 Erabilera-testuingurua</label>${inlineSelect('context_id', lookups.contextos||[], 'context_id', 'nombre', ar?.context_id)}</div>
+    <div class="field"><label>🎺 Instrumentuak</label><div id="m-instr-selector"></div></div>
+    <div class="field"><label>🔗 Moldaketa parekatuak</label>${parejaSelectorHtml(currentParejaIds)}</div>
+  `, async () => {
+    const durVal = document.getElementById('m-dur').value.trim();
+    const durFormatted = durVal.match(/^\d+:\d{2}$/) ? `00:${durVal}` : durVal||null;
+    try {
+      await apiPut(`/arreglos/${arreglo_id}`, {
+        arreglista_id:   document.querySelector('[name=arreglista_id]').value || null,
+        tonalidad_id:    document.querySelector('[name=tonalidad_id]').value  || null,
+        genero_id:       document.querySelector('[name=genero_id]').value     || null,
+        anyo:            document.getElementById('m-anyo').value || null,
+        context_id:      document.querySelector('[name=context_id]')?.value || null,
+        instrumento_ids: instrSelectorGet('m-instr-selector'),
+        duracion:        durFormatted
+      });
+      await apiPut(`/arreglos/${arreglo_id}/parejas`, { pareja_ids: parejaSelectorGet() });
+      closeModal(); toast('Eguneratuta ✓','success'); selectObra(state.selectedObra.obra_id);
+    } catch(e) { toast(e.message,'error'); }
+  });
+  instrSelectorInit('m-instr-selector', ar?.instrumentos||[]);
+  });
+}
+async function deleteArreglo(arreglo_id) {
+  if (!confirm('Moldaketa ezabatu?')) return;
+  try { await apiDelete(`/arreglos/${arreglo_id}`); toast('Ezabatuta','success'); selectObra(state.selectedObra.obra_id); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+// ── CRUD COPIA ──
+function _instrOpts(arreglo_id, currentId = null) {
+  // Gets instruments defined for the arreglo from the current tree
+  let instrs = [];
+  state.selectedObra?.versiones?.forEach(v =>
+    v.arreglos?.forEach(a => { if (a.arreglo_id === arreglo_id) instrs = a.instrumentos || []; })
+  );
+  if (!instrs.length) return '<option value="">— Ez dago instrumenturik —</option>';
+  return `<option value="">— Hautatu —</option>` +
+    instrs.map(i =>
+      `<option value="${i.instrumento_id}" ${i.instrumento_id == currentId ? 'selected' : ''}>${i.nombre}</option>`
+    ).join('');
+}
+
+function addCopia(arreglo_id) {
+  openModal('Kopia gehitu', `
+    <div class="field"><label>Kopia mota</label>${inlineSelect('tipo_copia_id', lookups['tipos-copia'], 'tipo_copia_id', 'nombre')}</div>
+    <div class="field"><label>Oharrak</label><textarea id="m-notas" rows="2"></textarea></div>
+  `, async () => {
+    try {
+      await apiPost('/copias', {
+        arreglo_id,
+        tipo_copia_id: document.querySelector('[name=tipo_copia_id]').value || null,
+        notas:         document.getElementById('m-notas').value.trim()
+      });
+      closeModal(); toast('Kopia sortuta ✓','success'); selectObra(state.selectedObra.obra_id);
+    } catch(e) { toast(e.message,'error'); }
+  });
+}
+
+function editCopia(copia_id, arreglo_id) {
+  let cp = null;
+  state.selectedObra?.versiones?.forEach(v =>
+    v.arreglos?.forEach(a => a.copias?.forEach(c => { if (c.copia_id === copia_id) { cp = c; arreglo_id = arreglo_id || a.arreglo_id; } }))
+  );
+  openModal('Kopia editatu', `
+    <div class="field"><label>Kopia mota</label>${inlineSelect('tipo_copia_id', lookups['tipos-copia'], 'tipo_copia_id', 'nombre', cp?.tipo_copia_id)}</div>
+    <div class="field"><label>Oharrak</label><textarea id="m-notas" rows="2">${cp?.notas||''}</textarea></div>
+  `, async () => {
+    try {
+      await apiPut(`/copias/${copia_id}`, {
+        tipo_copia_id: document.querySelector('[name=tipo_copia_id]').value || null,
+        notas:         document.getElementById('m-notas').value.trim()
+      });
+      closeModal(); toast('Eguneratuta ✓','success'); selectObra(state.selectedObra.obra_id);
+    } catch(e) { toast(e.message,'error'); }
+  });
+}
+async function deleteCopia(copia_id) {
+  if (!confirm('Kopia eta bere euskarriak ezabatu?')) return;
+  try { await apiDelete(`/copias/${copia_id}`); toast('Ezabatuta','success'); selectObra(state.selectedObra.obra_id); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+// ── CRUD SOPORTE ──
+function addSoporte(copia_id, arreglo_id) {
+  openModal('Euskarria gehitu', `
+    <div class="field"><label>Mota</label>${inlineSelect('tipo_soporte_id', lookups['tipos-soporte'], 'tipo_soporte_id', 'nombre')}</div>
+    <div class="field">
+      <label>🎺 Instrumentua</label>
+      <div class="select-inline">
+        <select name="instrumento_id">${_instrOpts(arreglo_id)}</select>
+        <button type="button" class="btn-inline-add" onclick="inlineAdd('instrumento_id')">+ Berria</button>
+      </div>
+      <div style="font-size:0.72rem;color:var(--ink3);margin-top:3px">Utz hutsik Gidoia/Orokorra bada</div>
+    </div>
+    <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:0.78rem;margin-bottom:10px;color:var(--ink2)">📁 Fitxategi digitala</div>
+      <div class="field"><label>Fitxategia igo</label><input type="file" id="m-file" style="padding:4px"></div>
+      <div class="upload-progress" id="upload-progress">
+        <div class="upload-bar-track"><div class="upload-bar-fill" id="upload-bar-fill"></div></div>
+        <div class="upload-label" id="upload-label">0%</div>
+      </div>
+    </div>
+    <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:0.78rem;margin-bottom:10px;color:var(--ink2)">🌐 URL kanpokoa</div>
+      <div class="field"><label>URL (YouTube, SoundCloud...)</label><input id="m-url" placeholder="https://..."></div>
+    </div>
+    <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:0.78rem;margin-bottom:10px;color:var(--ink2)">📦 Kokaleku fisikoa</div>
+      <div class="field"><label>Kokalekua</label>${inlineSelect('ubicacion_id', lookups.ubicaciones, 'ubicacion_id', 'nombre')}</div>
+    </div>
+    <div class="field"><label>Data</label><input type="date" id="m-date"></div>
+  `, async () => {
+    const file    = document.getElementById('m-file').files[0];
+    const url     = document.getElementById('m-url').value.trim();
+    const tipId   = document.querySelector('[name=tipo_soporte_id]').value || null;
+    const ubId    = document.querySelector('[name=ubicacion_id]').value    || null;
+    const instrId = document.querySelector('[name=instrumento_id]').value  || null;
+    const date    = document.getElementById('m-date').value || null;
+    try {
+      if (file) {
+        const progress = document.getElementById('upload-progress');
+        const bar      = document.getElementById('upload-bar-fill');
+        const lbl      = document.getElementById('upload-label');
+        const saveBtn  = document.getElementById('btn-modal-save');
+        progress.classList.add('visible');
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Igotzen...'; }
+
+        const fd = new FormData();
+        fd.append('file', file);
+        if (tipId)   fd.append('tipo_soporte_id', tipId);
+        if (ubId)    fd.append('ubicacion_id', ubId);
+        if (instrId) fd.append('instrumento_id', instrId);
+        if (date)    fd.append('created_date', date);
+
+        await apiUpload(`/soportes/upload/${copia_id}`, fd, pct => {
+          bar.style.width = pct + '%';
+          lbl.textContent = pct === 100 ? 'Prozesatzen...' : `${pct}%`;
+        });
+      } else {
+        await apiPost('/soportes', { copia_id, tipo_soporte_id:tipId, url_externa:url||null, ubicacion_id:ubId, instrumento_id:instrId, created_date:date });
+      }
+      closeModal(); toast('Euskarria sortuta ✓','success'); selectObra(state.selectedObra.obra_id);
+    } catch(e) {
+      const saveBtn = document.getElementById('btn-modal-save');
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Gorde'; }
+      toast(e.message,'error');
+    }
+  });
+}
+async function deleteSoporte(soporte_id) {
+  if (!confirm('Euskarria ezabatu?')) return;
+  try { await apiDelete(`/soportes/${soporte_id}`); toast('Ezabatuta','success'); selectObra(state.selectedObra.obra_id); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+function editSoporte(soporte_id) {
+  // Find soporte in current tree
+  let s = null, arreglo_id = null;
+  state.selectedObra?.versiones?.forEach(v =>
+    v.arreglos?.forEach(a => a.copias?.forEach(cp =>
+      cp.soportes?.forEach(sx => { if (sx.soporte_id === soporte_id) { s = sx; arreglo_id = a.arreglo_id; } })
+    ))
+  );
+  if (!s) return;
+  const copia_id = (() => {
+    let cid = null;
+    state.selectedObra?.versiones?.forEach(v => v.arreglos?.forEach(a => a.copias?.forEach(cp =>
+      cp.soportes?.forEach(sx => { if (sx.soporte_id === soporte_id) cid = cp.copia_id; })
+    )));
+    return cid;
+  })();
+  openModal('Euskarria editatu', `
+    <div class="field"><label>Mota</label>${inlineSelect('tipo_soporte_id', lookups['tipos-soporte'], 'tipo_soporte_id', 'nombre', s.tipo_soporte_id)}</div>
+    <div class="field">
+      <label>🎺 Instrumentua</label>
+      <div class="select-inline">
+        <select name="instrumento_id">${_instrOpts(arreglo_id, s.instrumento_id)}</select>
+        <button type="button" class="btn-inline-add" onclick="inlineAdd('instrumento_id')">+ Berria</button>
+      </div>
+    </div>
+    ${s.url_externa
+      ? `<div class="field"><label>🌐 URL</label><input id="m-url" value="${s.url_externa||''}"></div>`
+      : `<div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px">
+           <div style="font-size:0.78rem;color:var(--ink3);margin-bottom:8px">📁 Uneko fitxategia: <code>${s.file_path||'—'}</code></div>
+           <div class="field" style="margin-bottom:0"><label>Fitxategi berria igo (aukerakoa)</label>
+             <input type="file" id="m-file-replace" style="padding:4px">
+           </div>
+           <div class="upload-progress" id="upload-progress2">
+             <div class="upload-bar-track"><div class="upload-bar-fill" id="upload-bar-fill2"></div></div>
+             <div class="upload-label" id="upload-label2">0%</div>
+           </div>
+         </div>`
+    }
+    <div class="field"><label>📦 Kokalekua</label>${inlineSelect('ubicacion_id', lookups.ubicaciones, 'ubicacion_id', 'nombre', s.ubicacion_id)}</div>
+    <div class="field"><label>Data</label><input type="date" id="m-date" value="${s.created_date||''}"></div>
+  `, async () => {
+    try {
+      const replaceFile = document.getElementById('m-file-replace')?.files[0];
+      if (replaceFile) {
+        // Upload new file first (replaces old on disk via same path logic), then update metadata
+        const progress = document.getElementById('upload-progress2');
+        const bar      = document.getElementById('upload-bar-fill2');
+        const lbl      = document.getElementById('upload-label2');
+        const saveBtn  = document.getElementById('btn-modal-save');
+        progress.classList.add('visible');
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Igotzen...'; }
+        const fd = new FormData();
+        fd.append('file', replaceFile);
+        const tipId  = document.querySelector('[name=tipo_soporte_id]').value || null;
+        const instrId = document.querySelector('[name=instrumento_id]').value || null;
+        const ubId   = document.querySelector('[name=ubicacion_id]').value    || null;
+        const date   = document.getElementById('m-date').value               || null;
+        if (tipId)   fd.append('tipo_soporte_id', tipId);
+        if (instrId) fd.append('instrumento_id', instrId);
+        if (ubId)    fd.append('ubicacion_id', ubId);
+        if (date)    fd.append('created_date', date);
+        // Delete old soporte record and upload as new
+        await apiDelete('/soportes/' + soporte_id);
+        await apiUpload('/soportes/upload/' + copia_id, fd, pct => {
+          bar.style.width = pct + '%';
+          lbl.textContent = pct === 100 ? 'Prozesatzen...' : pct + '%';
+        });
+      } else {
+        await apiPut('/soportes/' + soporte_id, {
+          tipo_soporte_id: document.querySelector('[name=tipo_soporte_id]').value || null,
+          instrumento_id:  document.querySelector('[name=instrumento_id]').value  || null,
+          ubicacion_id:    document.querySelector('[name=ubicacion_id]').value    || null,
+          url_externa:     document.getElementById('m-url')?.value.trim()        || s.url_externa || null,
+          created_date:    document.getElementById('m-date').value               || null,
+        });
+      }
+      closeModal(); toast('Eguneratuta ✓','success'); selectObra(state.selectedObra.obra_id);
+    } catch(e) {
+      const saveBtn = document.getElementById('btn-modal-save');
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Gorde'; }
+      toast(e.message,'error');
+    }
+  });
+}
+
+// ── KONTZERTOAK ──
+async function loadConciertos() {
+  const list = document.getElementById('conciertos-list');
+  list.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    state.conciertos = await apiGet('/conciertos') || [];
+    list.innerHTML = state.conciertos.length
+      ? state.conciertos.map(c=>`
+          <div class="concierto-item ${state.selectedConcierto?.concierto_id===c.concierto_id?'selected':''}"
+               data-id="${c.concierto_id}" onclick="selectConcierto(${c.concierto_id})">
+            <div class="c-nombre">${c.nombre}</div>
+            <div class="c-fecha">${c.fecha||'—'}</div>
+            <div class="c-venue">${c.venue||''}</div>
+          </div>`).join('')
+      : '<div class="loading">Ez dago kontzertuk</div>';
+  } catch(e) { list.innerHTML=`<div class="loading" style="color:var(--red)">${e.message}</div>`; }
+}
+async function selectConcierto(id) {
+  document.querySelectorAll('.concierto-item').forEach(el=>el.classList.toggle('selected',parseInt(el.dataset.id)===id));
+  const detail = document.getElementById('concierto-detail');
+  detail.innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const c = await apiGet(`/conciertos/${id}`);
+    state.selectedConcierto = c;
+    renderConcierto(c);
+  } catch(e) { detail.innerHTML=`<div class="loading" style="color:var(--red)">${e.message}</div>`; }
+}
+function renderConcierto(c) {
+  const detail = document.getElementById('concierto-detail');
+  const programa = c.programa?.length ? `
+    <table class="programa-table">
+      <thead><tr><th>#</th><th>Obra</th><th>Tonalidad</th><th>Generoa</th><th>Iraupena</th><th>Instrumentazioa</th><th>Audio ref.</th>${canEdit()?'<th></th>':''}</tr></thead>
+      <tbody>${c.programa.map(p=>`
+        <tr>
+          <td style="font-family:monospace;color:var(--ink3);font-weight:700">${p.orden}</td>
+          <td><strong>${p.obra_title}</strong><div style="font-size:0.73rem;color:var(--ink3)">${p.version_desc||''}</div></td>
+          <td>${p.tonalidad?`<span class="badge badge-tone">${p.tonalidad}</span>`:'—'}</td>
+          <td>${p.genero?`<span class="badge badge-genre">${p.genero}</span>`:'—'}</td>
+          <td style="font-family:monospace;font-size:0.8rem">${p.duracion||'—'}</td>
+          <td style="font-size:0.8rem">${p.instrumentacion||'—'}</td>
+          <td>${p.audio_ref_path?`<button class="btn btn-secondary btn-sm" onclick="playAudio('${API}/media/${p.audio_ref_path}','Ref.')">▶</button>`:''}${p.audio_ref_url?`<button class="btn btn-secondary btn-sm" onclick="playAudio('${p.audio_ref_url}','Ref.')">▶ URL</button>`:''}</td>
+          ${canEdit()?`<td><button class="btn btn-danger btn-sm" onclick="deletePrograma(${p.programa_id},${c.concierto_id})">🗑</button></td>`:''}
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    ${c.duracion_total?`<div class="dur-total">⏱ Iraupena guztira: ${c.duracion_total}</div>`:''}
+  `:'<div style="padding:20px;font-style:italic;color:var(--ink3)">Ez dago programarik</div>';
+
+  const mediaHtml = `
+    <div class="card" style="margin-top:14px">
+      <div style="font-weight:700;font-size:0.9rem;margin-bottom:14px;color:var(--ink2)">🎙 Media</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+        <!-- Audio grabaketa -->
+        <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--ink3);margin-bottom:8px">🎵 Audio grabaketa</div>
+          ${c.grab_audio_path ? `<audio controls style="width:100%;margin-bottom:6px" src="${API}/media/${c.grab_audio_path}"></audio>` : ''}
+          ${c.grab_audio_url  ? `<audio controls style="width:100%;margin-bottom:6px" src="${c.grab_audio_url}"></audio>` : ''}
+          ${canEdit() ? `
+            <input id="ci-audio-url" type="text" placeholder="URL audio..." value="${c.grab_audio_url||''}" style="margin-bottom:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="file" id="ci-audio-file" accept="audio/*" style="font-size:0.75rem;flex:1">
+              <button class="btn btn-secondary btn-sm" onclick="uploadConcierto(${c.concierto_id},'audio','ci-audio-file','ci-audio-prog')">⬆</button>
+              <button class="btn btn-secondary btn-sm" onclick="saveConciertUrl(${c.concierto_id},'ci-audio-url')">💾</button>
+            </div>
+            <div class="upload-progress" id="ci-audio-prog"><div class="upload-bar-track"><div class="upload-bar-fill" id="ci-audio-bar"></div></div><div class="upload-label" id="ci-audio-lbl">0%</div></div>
+          ` : ''}
+        </div>
+
+        <!-- Bideo grabaketa -->
+        <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--ink3);margin-bottom:8px">🎬 Bideo grabaketa</div>
+          ${c.grab_video_path ? `<button class="btn btn-secondary btn-sm" onclick="playVideo('${API}/media/${c.grab_video_path}')">▶ Bideoa</button><br><br>` : ''}
+          ${c.grab_video_url  ? `<a href="${c.grab_video_url}" target="_blank" class="btn btn-secondary btn-sm">▶ URL Bideoa</a><br><br>` : ''}
+          ${canEdit() ? `
+            <input id="ci-video-url" type="text" placeholder="URL bideoa (YouTube...)..." value="${c.grab_video_url||''}" style="margin-bottom:6px">
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="file" id="ci-video-file" accept="video/*" style="font-size:0.75rem;flex:1">
+              <button class="btn btn-secondary btn-sm" onclick="uploadConcierto(${c.concierto_id},'video','ci-video-file','ci-video-prog')">⬆</button>
+              <button class="btn btn-secondary btn-sm" onclick="saveConciertUrl(${c.concierto_id},'ci-video-url')">💾</button>
+            </div>
+            <div class="upload-progress" id="ci-video-prog"><div class="upload-bar-track"><div class="upload-bar-fill" id="ci-video-bar"></div></div><div class="upload-label" id="ci-video-lbl">0%</div></div>
+          ` : ''}
+        </div>
+
+        <!-- Kartela -->
+        <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--ink3);margin-bottom:8px">🖼 Kartela</div>
+          ${c.kartela_path ? `<button class="btn btn-secondary btn-sm" onclick="openMediaPanel('${API}/media/${c.kartela_path}','Kartela')">🖼 Ikusi</button><br><br>` : '<div style="font-size:0.75rem;color:var(--ink3);margin-bottom:8px">Ez dago kartelarik</div>'}
+          ${canEdit() ? `
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="file" id="ci-kartela-file" accept="image/*,application/pdf" style="font-size:0.75rem;flex:1">
+              <button class="btn btn-secondary btn-sm" onclick="uploadConcierto(${c.concierto_id},'kartela','ci-kartela-file','ci-kartela-prog')">⬆</button>
+            </div>
+            <div class="upload-progress" id="ci-kartela-prog"><div class="upload-bar-track"><div class="upload-bar-fill" id="ci-kartela-bar"></div></div><div class="upload-label" id="ci-kartela-lbl">0%</div></div>
+          ` : ''}
+        </div>
+
+        <!-- Esku-programa -->
+        <div style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+          <div style="font-size:0.78rem;font-weight:700;color:var(--ink3);margin-bottom:8px">📄 Esku-programa</div>
+          ${c.esku_programa_path ? `<button class="btn btn-secondary btn-sm" onclick="openMediaPanel('${API}/media/${c.esku_programa_path}','Esku-programa')">📄 Ikusi</button><br><br>` : '<div style="font-size:0.75rem;color:var(--ink3);margin-bottom:8px">Ez dago esku-programarik</div>'}
+          ${canEdit() ? `
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="file" id="ci-eskuprog-file" accept="image/*,application/pdf" style="font-size:0.75rem;flex:1">
+              <button class="btn btn-secondary btn-sm" onclick="uploadConcierto(${c.concierto_id},'esku_programa','ci-eskuprog-file','ci-eskuprog-prog')">⬆</button>
+            </div>
+            <div class="upload-progress" id="ci-eskuprog-prog"><div class="upload-bar-track"><div class="upload-bar-fill" id="ci-eskuprog-bar"></div></div><div class="upload-label" id="ci-eskuprog-lbl">0%</div></div>
+          ` : ''}
+        </div>
+
+      </div>
+    </div>`;
+
+  detail.innerHTML = `
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-family:var(--font-display);font-size:1.4rem;color:var(--primary);font-weight:800">${c.nombre}</div>
+          <div style="color:var(--ink3);font-size:0.83rem;margin-top:4px">${c.fecha?`📅 ${c.fecha}`:''} ${c.venue?`· 📍 ${c.venue}`:''}</div>
+          ${c.notas?`<div style="margin-top:8px;font-size:0.83rem;color:var(--ink2)">${c.notas}</div>`:''}
+        </div>
+        ${canEdit()?`<div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-secondary btn-sm" onclick="addPrograma(${c.concierto_id})">+ Obra</button>
+          <button class="btn-ghost btn-sm" onclick="editConcierto(${c.concierto_id})">✏️</button>
+          ${isAdmin()?`<button class="btn btn-danger btn-sm" onclick="deleteConcierto(${c.concierto_id})">🗑</button>`:''}
+        </div>`:''}
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">${programa}</div>
+    ${mediaHtml}`;
+}
+
+document.getElementById('btn-new-concierto').onclick = () => {
+  openModal('Kontzertu berria', `
+    <div class="field"><label>Izena *</label><input id="m-nombre" placeholder="Gabon Kontzertua 2024..."></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><label>Data</label><input type="date" id="m-fecha"></div>
+      <div class="field"><label>Tokia</label><input id="m-venue" placeholder="Arriaga Antzokia..."></div>
+    </div>
+    <div class="field"><label>Oharrak</label><textarea id="m-notas" rows="2"></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div class="field"><label>Audio grabaketa URL</label><input id="m-audio-url" placeholder="https://..."></div>
+      <div class="field"><label>Bideo grabaketa URL</label><input id="m-video-url" placeholder="https://youtube.com/..."></div>
+    </div>
+  `, async () => {
+    const nombre = document.getElementById('m-nombre').value.trim();
+    if (!nombre) return toast('Izena beharrezkoa da','error');
+    try {
+      await apiPost('/conciertos', {
+        nombre, fecha:document.getElementById('m-fecha').value||null,
+        venue:document.getElementById('m-venue').value.trim()||null,
+        notas:document.getElementById('m-notas').value.trim()||null,
+        grab_audio_url:document.getElementById('m-audio-url').value.trim()||null,
+        grab_video_url:document.getElementById('m-video-url').value.trim()||null,
+      });
+      closeModal(); toast('Kontzertua sortuta ✓','success'); loadConciertos();
+    } catch(e) { toast(e.message,'error'); }
+  });
+};
+function editConcierto(id) {
+  const c = state.selectedConcierto;
+  openModal('Kontzertua editatu', `
+    <div class="field"><label>Izena</label><input id="m-nombre" value="${c.nombre||''}"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><label>Data</label><input type="date" id="m-fecha" value="${c.fecha||''}"></div>
+      <div class="field"><label>Tokia</label><input id="m-venue" value="${c.venue||''}"></div>
+    </div>
+    <div class="field"><label>Oharrak</label><textarea id="m-notas" rows="2">${c.notas||''}</textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <div class="field"><label>Audio URL</label><input id="m-audio-url" value="${c.grab_audio_url||''}"></div>
+      <div class="field"><label>Bideo URL</label><input id="m-video-url" value="${c.grab_video_url||''}"></div>
+    </div>
+  `, async () => {
+    try {
+      await apiPut(`/conciertos/${id}`, {
+        nombre:document.getElementById('m-nombre').value.trim(),
+        fecha:document.getElementById('m-fecha').value||null,
+        venue:document.getElementById('m-venue').value.trim()||null,
+        notas:document.getElementById('m-notas').value.trim()||null,
+        grab_audio_url:document.getElementById('m-audio-url').value.trim()||null,
+        grab_video_url:document.getElementById('m-video-url').value.trim()||null,
+      });
+      closeModal(); toast('Eguneratuta ✓','success'); selectConcierto(id);
+    } catch(e) { toast(e.message,'error'); }
+  });
+}
+async function uploadConcierto(concierto_id, tipo, fileInputId, progId) {
+  const fileInput = document.getElementById(fileInputId);
+  if (!fileInput?.files[0]) return toast('Hautatu fitxategi bat','error');
+  const barId = progId.replace('-prog','-bar');
+  const lblId = progId.replace('-prog','-lbl');
+  const prog = document.getElementById(progId);
+  const bar  = document.getElementById(barId);
+  const lbl  = document.getElementById(lblId);
+  prog?.classList.add('visible');
+  const fd = new FormData();
+  fd.append('file', fileInput.files[0]);
+  try {
+    await apiUpload(`/conciertos/${concierto_id}/upload/${tipo}`, fd, pct => {
+      if (bar) bar.style.width = pct + '%';
+      if (lbl) lbl.textContent = pct === 100 ? 'Prozesatzen...' : pct + '%';
+    });
+    toast('Igota ✓','success');
+    selectConcierto(concierto_id);
+  } catch(e) { toast(e.message,'error'); prog?.classList.remove('visible'); }
+}
+
+async function saveConciertUrl(concierto_id, inputId) {
+  const url = document.getElementById(inputId)?.value.trim() || null;
+  const field = inputId.includes('audio') ? 'grab_audio_url' : 'grab_video_url';
+  const c = state.selectedConcierto;
+  try {
+    await apiPut(`/conciertos/${concierto_id}`, {
+      nombre: c.nombre, fecha: c.fecha||null, venue: c.venue||null,
+      notas: c.notas||null,
+      grab_audio_url: field==='grab_audio_url' ? url : c.grab_audio_url||null,
+      grab_video_url: field==='grab_video_url' ? url : c.grab_video_url||null,
+    });
+    toast('URL gordeta ✓','success'); selectConcierto(concierto_id);
+  } catch(e) { toast(e.message,'error'); }
+}
+
+async function deleteConcierto(id) {
+  if(!confirm('Kontzertua ezabatu?')) return;
+  try {
+    await apiDelete(`/conciertos/${id}`);
+    toast('Ezabatuta','success'); state.selectedConcierto=null;
+    document.getElementById('concierto-detail').innerHTML='<div class="card"><div class="tree-empty"><span class="big-icon">🎤</span>Hautatu kontzertua</div></div>';
+    loadConciertos();
+  } catch(e) { toast(e.message,'error'); }
+}
+function addPrograma(concierto_id) {
+  // Build obra options from state.obras
+  const obrasOpts = ['<option value="">— Obra hautatu —</option>',
+    ...state.obras.map(o => `<option value="${o.obra_id}">${o.title}</option>`)
+  ].join('');
+
+  openModal('Obra gehitu programara', `
+    <div class="field"><label>Obra *</label>
+      <select id="m-obra-sel" onchange="onProgramaObraChange()">${obrasOpts}</select>
+    </div>
+    <div class="field" id="m-arreglo-wrap" style="display:none"><label>Moldaketa *</label>
+      <select id="m-arreglo-sel" onchange="onProgramaArregloChange()"><option value="">— Moldaketa hautatu —</option></select>
+    </div>
+    <div class="field" id="m-copia-wrap" style="display:none"><label>Kopia *</label>
+      <select id="m-copia-sel"><option value="">— Kopia hautatu —</option></select>
+    </div>
+    <div class="field"><label>Ordena (programan) *</label><input id="m-orden" type="number" placeholder="1" min="1"></div>
+    <div class="field"><label>Oharrak</label><input id="m-notas-prog"></div>
+  `, async () => {
+    const copia_id = parseInt(document.getElementById('m-copia-sel').value);
+    const orden    = parseInt(document.getElementById('m-orden').value);
+    if (!copia_id || !orden) return toast('Kopia eta ordena beharrezkoak dira', 'error');
+    try {
+      await apiPost(`/conciertos/${concierto_id}/programa`, {
+        copia_id, orden,
+        notas: document.getElementById('m-notas-prog').value.trim() || null
+      });
+      closeModal(); toast('Gehituta ✓', 'success'); selectConcierto(concierto_id);
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+
+async function onProgramaObraChange() {
+  const obra_id = parseInt(document.getElementById('m-obra-sel').value);
+  const arregloWrap = document.getElementById('m-arreglo-wrap');
+  const copiaWrap   = document.getElementById('m-copia-wrap');
+  const arregloSel  = document.getElementById('m-arreglo-sel');
+  const copiaSel    = document.getElementById('m-copia-sel');
+  arregloWrap.style.display = 'none';
+  copiaWrap.style.display   = 'none';
+  arregloSel.innerHTML = '<option value="">— Moldaketa hautatu —</option>';
+  copiaSel.innerHTML   = '<option value="">— Kopia hautatu —</option>';
+  if (!obra_id) return;
+  try {
+    const tree = await apiGet(`/obras/${obra_id}/tree`);
+    const arreglos = [];
+    (tree.versiones||[]).forEach(v => (v.arreglos||[]).forEach(a => {
+      arreglos.push({ ...a, obra_title: tree.title });
+    }));
+    arreglos.forEach(a => {
+      const label = `${a.arreglista_nombre||'—'} ${a.anyo?'('+a.anyo+')':''} ${a.genero_nombre?'· '+a.genero_nombre:''} #${a.arreglo_id}`;
+      arregloSel.innerHTML += `<option value="${a.arreglo_id}" data-tree='${JSON.stringify(a.copias||[])}'>${label}</option>`;
+    });
+    arregloWrap.style.display = '';
+  } catch(e) { toast(e.message,'error'); }
+}
+
+function onProgramaArregloChange() {
+  const sel = document.getElementById('m-arreglo-sel');
+  const opt = sel.options[sel.selectedIndex];
+  const copiaWrap = document.getElementById('m-copia-wrap');
+  const copiaSel  = document.getElementById('m-copia-sel');
+  copiaSel.innerHTML = '<option value="">— Kopia hautatu —</option>';
+  copiaWrap.style.display = 'none';
+  if (!opt || !opt.value) return;
+  let copias = [];
+  try { copias = JSON.parse(opt.dataset.tree || '[]'); } catch(e) {}
+  copias.forEach(cp => {
+    copiaSel.innerHTML += `<option value="${cp.copia_id}">${cp.tipo_copia_nombre||'Kopia'} #${cp.copia_id}${cp.notas?' — '+cp.notas:''}</option>`;
+  });
+  copiaWrap.style.display = '';
+}
+async function deletePrograma(programa_id, concierto_id) {
+  if(!confirm('Programatik kendu?')) return;
+  try { await apiDelete(`/conciertos/programa/${programa_id}`); toast('Kenduta','success'); selectConcierto(concierto_id); }
+  catch(e) { toast(e.message,'error'); }
+}
+
+// ── ADMIN ──
+const LOOKUP_LABELS = {
+  'generos':'Generoak','tonalidades':'Tonalitateak','tipos-copia':'Kopia motak',
+  'tipos-soporte':'Euskarri motak','idiomas':'Hizkuntzak',
+  'compositores':'Konpositoreak','arreglistas':'Moldatzaileak',
+  'ubicaciones':'Kokalekuak','instrumentos':'Instrumentuak','contextos':'Erabilera-testuinguruak'
+};
+async function loadAdmin() {
+  renderLookupGrid();
+  const usersSection = document.getElementById('users-section');
+  const usersTitle   = document.getElementById('users-section-title');
+  if (isAdmin()) {
+    usersSection.style.display = '';
+    usersTitle.style.display   = '';
+    loadUsuarios();
+  } else {
+    usersSection.style.display = 'none';
+    usersTitle.style.display   = 'none';
+  }
+}
+function renderLookupGrid() {
+  document.getElementById('lookup-grid').innerHTML = Object.entries(LOOKUP_LABELS).map(([key,label])=>{
+    const items = lookups[key]||[];
+    return `
+    <div class="lookup-card">
+      <div class="lookup-card-header">${label}
+        <button class="btn btn-primary btn-sm" onclick="addLookupItem('${key}')">+</button>
+      </div>
+      <ul class="lookup-list">
+        ${items.map(i=>{ const pk=Object.keys(i).find(k=>k.endsWith('_id'));
+          const isProtected = key === 'instrumentos' && i.nombre === 'Gidoia';
+          return `<li><span>${i.nombre}${isProtected ? ' 🔒' : ''}</span>
+            ${isProtected
+              ? `<span style="font-size:0.68rem;color:var(--ink3)">Sistema</span>`
+              : isAdmin()
+                ? `<button class="btn-ghost btn-xs" style="color:var(--red)" onclick="deleteLookupItem('${key}',${i[pk]})">✕</button>`
+                : ''
+            }
+          </li>`; }).join('')}
+      </ul>
+    </div>`;
+  }).join('');
+}
+function addLookupItem(key) {
+  const label = LOOKUP_LABELS[key];
+  openModal(`${label} gehitu`, `
+    <div class="field"><label>Izena</label><input id="m-nombre"></div>
+    ${key==='idiomas'?`<div class="field"><label>Kodea (eu, es...)</label><input id="m-codigo"></div>`:''}
+  `, async () => {
+    const nombre = document.getElementById('m-nombre').value.trim();
+    if (!nombre) return toast('Izena beharrezkoa da','error');
+    const body = { nombre };
+    if (key==='idiomas') body.codigo = document.getElementById('m-codigo')?.value.trim();
+    try {
+      await apiPost(`/lookups/${key}`, body);
+      closeModal(); toast('Gehituta ✓','success');
+      await loadLookups(); renderLookupGrid();
+    } catch(e) { toast(e.message,'error'); }
+  });
+}
+async function deleteLookupItem(key, id) {
+  if(!confirm('Ezabatu?')) return;
+  try { await apiDelete(`/lookups/${key}/${id}`); toast('Ezabatuta','success'); await loadLookups(); renderLookupGrid(); }
+  catch(e) { toast(e.message,'error'); }
+}
+async function loadUsuarios() {
+  try {
+    const users = await apiGet('/auth/usuarios') || [];
+    const myId = state.user?.usuario_id;
+    document.getElementById('users-tbody').innerHTML = users.map(u => `
+      <tr style="${!u.activo ? 'opacity:0.5' : ''}">
+        <td>
+          <strong>${u.username}</strong>
+          ${u.usuario_id == myId ? ' <span style="font-size:0.68rem;background:var(--primary-light);color:var(--primary);padding:1px 6px;border-radius:4px">Ni</span>' : ''}
+        </td>
+        <td style="font-size:0.8rem;color:var(--ink3)">${u.email || '—'}</td>
+        <td><span class="role-pill role-${u.role}">${u.role}</span></td>
+        <td style="text-align:center">${u.activo ? '✅' : '❌'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn-ghost btn-sm" onclick="editUser(${u.usuario_id})">✏️</button>
+          ${u.usuario_id != myId
+            ? `<button class="btn btn-danger btn-sm" style="margin-left:4px" onclick="deleteUser(${u.usuario_id},'${u.username}')">🗑</button>`
+            : ''}
+        </td>
+      </tr>`).join('');
+  } catch(e) {}
+}
+
+document.getElementById('btn-new-user').onclick = () => {
+  openModal('Erabiltzaile berria', `
+    <div class="field"><label>Erabiltzaile izena *</label><input id="m-username" autocomplete="off"></div>
+    <div class="field"><label>Email</label><input type="email" id="m-email" autocomplete="off"></div>
+    <div class="field"><label>Pasahitza *</label><input type="password" id="m-pass" autocomplete="new-password"></div>
+    <div class="field"><label>Rola</label>
+      <select id="m-role">
+        <option value="reader">Reader</option>
+        <option value="editor">Editor</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+  `, async () => {
+    try {
+      await apiPost('/auth/usuarios', {
+        username: document.getElementById('m-username').value.trim(),
+        email:    document.getElementById('m-email').value.trim(),
+        password: document.getElementById('m-pass').value,
+        role:     document.getElementById('m-role').value,
+      });
+      closeModal(); toast('Sortuta ✓', 'success'); loadUsuarios();
+    } catch(e) { toast(e.message, 'error'); }
+  });
+};
+
+async function editUser(uid) {
+  const users = await apiGet('/auth/usuarios') || [];
+  const u = users.find(x => x.usuario_id === uid);
+  if (!u) return;
+  openModal(`✏️ ${u.username} editatu`, `
+    <div class="field"><label>Erabiltzaile izena</label><input id="m-username" value="${u.username}" autocomplete="off"></div>
+    <div class="field"><label>Email</label><input type="email" id="m-email" value="${u.email || ''}" autocomplete="off"></div>
+    <div class="field"><label>Pasahitz berria <span style="font-weight:400;color:var(--ink3)">(utzi hutsik aldatu nahi ez baduzu)</span></label>
+      <input type="password" id="m-pass" placeholder="••••••••" autocomplete="new-password"></div>
+    <div class="field"><label>Rola</label>
+      <select id="m-role">
+        <option value="reader"  ${u.role==='reader' ?'selected':''}>Reader</option>
+        <option value="editor"  ${u.role==='editor' ?'selected':''}>Editor</option>
+        <option value="admin"   ${u.role==='admin'  ?'selected':''}>Admin</option>
+      </select>
+    </div>
+    <div class="field"><label>Egoera</label>
+      <select id="m-activo">
+        <option value="1" ${u.activo ?'selected':''}>Aktibo</option>
+        <option value="0" ${!u.activo?'selected':''}>Desaktibatuta</option>
+      </select>
+    </div>
+  `, async () => {
+    const payload = {
+      username: document.getElementById('m-username').value.trim(),
+      email:    document.getElementById('m-email').value.trim(),
+      role:     document.getElementById('m-role').value,
+      activo:   document.getElementById('m-activo').value === '1',
+    };
+    const pw = document.getElementById('m-pass').value;
+    if (pw) payload.password = pw;
+    try {
+      await apiPut(`/auth/usuarios/${uid}`, payload);
+      closeModal(); toast('Eguneratuta ✓', 'success'); loadUsuarios();
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+
+async function deleteUser(uid, username) {
+  if (!confirm(`"${username}" erabiltzailea ezabatu nahi duzu?\nEkintza hau ezin da desegin.`)) return;
+  try {
+    await apiDelete(`/auth/usuarios/${uid}`);
+    toast('Ezabatuta ✓', 'success'); loadUsuarios();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function toggleUserActive(uid, current) {
+  try { await apiPut(`/auth/usuarios/${uid}`, { activo: !current }); toast('Eguneratuta ✓', 'success'); loadUsuarios(); }
+  catch(e) { toast(e.message, 'error'); }
+}
+
+// ── INSTRUMENTO SELECTOR WIDGET ──
+// Un selector inline que permite añadir/quitar instrumentos con chips
+const instrSelectorState = {}; // containerId -> Set of instrumento_ids
+
+function instrSelectorInit(containerId, existing = []) {
+  instrSelectorState[containerId] = new Set(existing.map(i => i.instrumento_id));
+  instrSelectorRender(containerId);
+}
+
+function instrSelectorGet(containerId) {
+  return Array.from(instrSelectorState[containerId] || []);
+}
+
+function instrSelectorRender(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const selected = instrSelectorState[containerId] || new Set();
+  const available = (lookups.instrumentos || []).filter(i => !selected.has(i.instrumento_id));
+
+  const chips = Array.from(selected).map(id => {
+    const instr = (lookups.instrumentos||[]).find(i => i.instrumento_id === id);
+    if (!instr) return '';
+    return `<span style="display:inline-flex;align-items:center;gap:4px;background:var(--primary-light);color:var(--primary);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:0.78rem;font-weight:600;margin:2px">
+      🎺 ${instr.nombre}
+      <button type="button" onclick="instrSelectorRemove('${containerId}',${id})"
+        style="background:none;border:none;color:var(--primary);cursor:pointer;font-size:0.85rem;padding:0;line-height:1">✕</button>
+    </span>`;
+  }).join('');
+
+  const availableOpts = available.map(i =>
+    `<option value="${i.instrumento_id}">${i.nombre}</option>`
+  ).join('');
+
+  container.innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:2px;min-height:32px;padding:6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);margin-bottom:6px">
+      ${chips || '<span style="color:var(--ink3);font-size:0.78rem;font-style:italic;align-self:center">Ez da instrumenturik gehitu</span>'}
+    </div>
+    <div class="select-inline">
+      <select id="${containerId}-sel">
+        <option value="">+ Instrumentua gehitu...</option>
+        ${availableOpts}
+      </select>
+      <button type="button" class="btn-inline-add" onclick="instrSelectorAdd('${containerId}')">+ Gehitu</button>
+      <button type="button" class="btn-inline-add" style="background:var(--green-bg);color:#059076;border-color:var(--border)" onclick="instrSelectorNew('${containerId}')">+ Berria</button>
+    </div>`;
+}
+
+function instrSelectorAdd(containerId) {
+  const sel = document.getElementById(`${containerId}-sel`);
+  const id = parseInt(sel.value);
+  if (!id) return;
+  instrSelectorState[containerId].add(id);
+  instrSelectorRender(containerId);
+}
+
+function instrSelectorRemove(containerId, id) {
+  instrSelectorState[containerId].delete(id);
+  instrSelectorRender(containerId);
+}
+
+async function instrSelectorNew(containerId) {
+  const nombre = prompt('Instrumento berriaren izena:');
+  if (!nombre?.trim()) return;
+  try {
+    await apiPost('/lookups/instrumentos', { nombre: nombre.trim() });
+    await loadLookups();
+    // Auto-select the new one
+    const newInstr = (lookups.instrumentos||[]).find(i => i.nombre === nombre.trim());
+    if (newInstr) instrSelectorState[containerId].add(newInstr.instrumento_id);
+    instrSelectorRender(containerId);
+    toast(`${nombre} gehituta ✓`, 'success');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+// ── BISTA NAGUSIA ──
+function populateBistaFilters() {
+  const fill = (selId, items, idField) => {
+    const sel = document.getElementById(selId);
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">— Guztiak —</option>' +
+      items.map(i => `<option value="${i[idField]}">${i.nombre}</option>`).join('');
+    sel.value = cur;
+  };
+  fill('f-genero',     lookups.generos,      'genero_id');
+  fill('f-tonalidad',  lookups.tonalidades,   'tonalidad_id');
+  fill('f-arreglista', lookups.arreglistas,   'arreglista_id');
+  fill('f-compositor', lookups.compositores,  'compositor_id');
+  fill('f-context',    lookups.contextos||[], 'context_id');
+  fill('f-ubicacion',  lookups.ubicaciones,   'ubicacion_id');
+  fill('f-instrumento',lookups.instrumentos,  'instrumento_id');
+}
+
+function bistaFiltersToParams() {
+  const p = new URLSearchParams();
+  const v = id => document.getElementById(id).value.trim();
+  if (v('f-q'))              p.set('q',             v('f-q'));
+  if (v('f-genero'))         p.set('genero_id',     v('f-genero'));
+  if (v('f-tonalidad'))      p.set('tonalidad_id',  v('f-tonalidad'));
+  if (v('f-arreglista'))     p.set('arreglista_id', v('f-arreglista'));
+  if (v('f-compositor'))     p.set('compositor_id', v('f-compositor'));
+  if (v('f-context'))        p.set('context_id',    v('f-context'));
+  if (v('f-instrumento'))    p.set('instrumento_id',  v('f-instrumento'));
+  if (v('f-ubicacion'))      p.set('ubicacion_id',  v('f-ubicacion'));
+  if (v('f-anyo-min'))       p.set('anyo_min',      v('f-anyo-min'));
+  if (v('f-anyo-max'))       p.set('anyo_max',      v('f-anyo-max'));
+  if (v('f-dur-min'))        p.set('dur_min', durationToTime(v('f-dur-min')));
+  if (v('f-dur-max'))        p.set('dur_max', durationToTime(v('f-dur-max')));
+  return p;
+}
+
+function durationToTime(str) {
+  if (!str) return '';
+  if (str.match(/^\d+:\d{2}$/)) return `00:${str}`;
+  return str;
+}
+
+function initBista() {
+  populateBistaFilters();
+}
+
+async function runBistaSearch() {
+  const res = document.getElementById('bista-results');
+  res.innerHTML = '<div class="loading"><div class="spinner"></div> Bilatzen...</div>';
+  try {
+    const params = bistaFiltersToParams();
+    const rows = await apiGet(`/arreglos/search?${params.toString()}`) || [];
+    document.getElementById('bista-count').textContent = `${rows.length} emaitza`;
+    renderBistaCards(rows);
+  } catch(e) {
+    res.innerHTML = `<div class="loading" style="color:var(--red)">Errorea: ${e.message}</div>`;
+  }
+}
+
+function renderBistaCards(rows) {
+  const res = document.getElementById('bista-results');
+  if (!rows.length) {
+    res.innerHTML = `<div class="tree-empty" style="min-height:180px"><span class="big-icon">😶</span>Ez da emaitzarik aurkitu</div>`;
+    return;
+  }
+  res.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px">
+    ${rows.map(r => bistaCard(r)).join('')}
+  </div>`;
+}
+
+function bistaCard(r) {
+  const badges = [
+    r.genero_nombre    ? `<span class="badge badge-genre">${r.genero_nombre}</span>` : '',
+    r.tonalidad_nombre ? `<span class="badge badge-tone">${r.tonalidad_nombre}</span>` : '',
+    r.duracion         ? `<span class="badge" style="background:var(--bg2);color:var(--ink2)">⏱ ${r.duracion}</span>` : '',
+    r.anyo             ? `<span class="badge" style="background:var(--bg2);color:var(--ink2)">${r.anyo}</span>` : '',
+    r.context_nombre   ? `<span class="badge" style="background:#fef3c7;color:#92400e">📌 ${r.context_nombre}</span>` : '',
+  ].filter(Boolean).join(' ');
+
+  const copias = r.copias || [];
+
+  // Separate PDFs from other soportes
+  const pdfCopias = [];   // copias that have at least one PDF soporte
+  const otherCopias = []; // everything else
+
+  copias.forEach(cp => {
+    const pdfSoportes = (cp.soportes||[]).filter(s => (s.file_path||'').toLowerCase().endsWith('.pdf'));
+    const otherSoportes = (cp.soportes||[]).filter(s => !(s.file_path||'').toLowerCase().endsWith('.pdf'));
+    if (pdfSoportes.length) pdfCopias.push({...cp, soportes: pdfSoportes});
+    if (otherSoportes.length || !pdfSoportes.length) otherCopias.push({...cp, soportes: otherSoportes});
+  });
+
+  // PDF group block
+  const pdfGroupHtml = pdfCopias.length ? `
+    <div style="background:var(--primary-light);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:0.78rem;font-weight:700;color:var(--primary)">📄 Partiturak (PDF)</span>
+        <a class="btn btn-primary btn-xs" href="${API}/copias/arreglo/${r.arreglo_id}/pdf-zip" download
+           title="PDF guztiak ZIP formatuan deskargatu">⬇ ZIP</a>
+      </div>
+      ${pdfCopias.map(cp => {
+        const s = cp.soportes[0];
+        const src = `${API}/media/${s.file_path}`;
+        const label = s.instrumento_nombre || cp.tipo_copia_nombre || 'Gidoia';
+        return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:0.8rem;font-weight:600;flex:1;color:var(--ink2)">
+            ${s.instrumento_nombre ? `🎺 ${s.instrumento_nombre}` : `📋 ${cp.tipo_copia_nombre||'Gidoia'}`}
+          </span>
+          <button class="btn btn-secondary btn-xs" onclick="openPdf('${src}','${label}')">👁 Ikusi</button>
+          <a class="btn btn-secondary btn-xs" href="${src}" download>⬇</a>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  // Other copias block
+  const otherHtml = otherCopias.filter(cp => cp.soportes?.length).map(cp => {
+    const soportesHtml = (cp.soportes||[]).map(s => {
+      const ext = (s.file_path||'').split('.').pop().toLowerCase();
+      const src = s.file_path ? `${API}/media/${s.file_path}` : s.url_externa;
+      let btns = '';
+      if (src) {
+        const bExt = (s.file_path||'').split('.').pop().toLowerCase();
+        if (s.file_path && (AUDIO_EXTS.includes(bExt) || VIDEO_EXTS.includes(bExt) || IMG_EXTS.includes(bExt) || bExt === 'pdf')) {
+          const icon = AUDIO_EXTS.includes(bExt) ? '🎵' : VIDEO_EXTS.includes(bExt) ? '▶' : IMG_EXTS.includes(bExt) ? '🖼' : '📄';
+          btns += `<button class="btn btn-secondary btn-xs" onclick="openPanel('${src}','')">${icon}</button>`;
+        } else if (s.url_externa)
+          btns += `<a class="btn btn-secondary btn-xs" href="${s.url_externa}" target="_blank" rel="noopener">${s.url_externa.includes('youtube') || s.url_externa.includes('youtu.be') || s.url_externa.includes('vimeo') ? '▶' : '🔗'}</a>`;
+        if (s.file_path)
+          btns += `<a class="btn btn-secondary btn-xs" href="${src}" download>⬇</a>`;
+      }
+      if (s.ubicacion_nombre) btns += `<span style="font-size:0.7rem;color:var(--ink3)">📦 ${s.ubicacion_nombre}</span>`;
+      return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--bg2)">
+        <span class="badge ${s.es_digital?'badge-digital':'badge-physical'}" style="font-size:0.65rem">${s.tipo_soporte_nombre||'?'}</span>
+        <span style="flex:1;font-size:0.73rem;color:var(--ink3);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.file_path||s.url_externa||s.ubicacion_nombre||''}</span>
+        <div style="display:flex;gap:3px;flex-shrink:0">${btns}</div>
+      </div>`;
+    }).join('');
+    return `<div style="margin-bottom:6px;padding:8px;background:var(--bg);border-radius:var(--radius-sm)">
+      <div style="font-size:0.75rem;font-weight:700;color:var(--ink2);margin-bottom:4px">
+        📋 ${cp.tipo_copia_nombre||'Kopia'}
+        <span class="badge-id">#${cp.copia_id}</span>
+        ${cp.notas ? `<span style="font-weight:400;color:var(--ink3)"> · ${cp.notas}</span>` : ''}
+      </div>
+      ${soportesHtml}
+    </div>`;
+  }).join('');
+
+  const noContent = !pdfCopias.length && !otherCopias.filter(c=>c.soportes?.length).length;
+
+  return `
+  <div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
+    <div style="padding:16px 18px;border-bottom:1.5px solid var(--border)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <div>
+          <div style="font-family:var(--font-display);font-size:1.05rem;font-weight:800;color:var(--primary);line-height:1.2">${r.obra_title}</div>
+          <div style="font-size:0.75rem;color:var(--ink3);margin-top:2px">
+            ${r.compositor_nombre ? `🎼 ${r.compositor_nombre}` : ''}
+            ${r.arreglista_nombre ? ` · 🎻 ${r.arreglista_nombre}` : ''}
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-xs" title="Zuhaitz orokorra-en ikusi"
+          onclick="goToMam(${r.obra_id})" style="flex-shrink:0">🌳</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">${badges}</div>
+      ${r.instrumentos?.length ? `<div style="font-size:0.78rem;color:var(--ink2)">🎺 ${r.instrumentos.join(', ')}</div>` : ''}
+      ${r.version_desc ? `<div style="font-size:0.73rem;color:var(--ink3);margin-top:2px;font-style:italic">${r.version_desc}</div>` : ''}
+      ${(r.parejas||[]).length ? `<div style="font-size:0.72rem;color:var(--ink3);margin-top:4px">🔗 ${r.parejas.map(p=>`<span style="background:var(--bg2);border-radius:4px;padding:1px 6px;margin-right:3px;display:inline-block">${p.obra_title} — ${p.arreglista_nombre||'?'}${p.genero_nombre?' ('+p.genero_nombre+')':''} #${p.arreglo_id}</span>`).join('')}</div>` : ''}
+    </div>
+    <div style="padding:10px 18px;flex:1">
+      ${pdfGroupHtml}
+      ${otherHtml}
+      ${noContent ? '<div style="font-size:0.78rem;color:var(--ink3);padding:6px 0">Ez dago euskarririk</div>' : ''}
+    </div>
+  </div>`;
+}
+
+function goToMam(obra_id) {
+  // Navega al Zuhaitz orokorra y selecciona la obra
+  document.querySelectorAll('#nav button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#nav button[data-page="mam"]').classList.add('active');
+  document.querySelectorAll('#main section').forEach(s => s.style.display = 'none');
+  document.getElementById('page-mam').style.display = '';
+  selectObra(obra_id);
+  // Scroll up
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('btn-bista-search').onclick = runBistaSearch;
+document.getElementById('btn-bista-clear').onclick = () => {
+  ['f-q','f-anyo-min','f-anyo-max','f-dur-min','f-dur-max']
+    .forEach(id => document.getElementById(id).value = '');
+  ['f-genero','f-tonalidad','f-arreglista','f-compositor','f-context','f-ubicacion','f-instrumento']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('bista-results').innerHTML =
+    `<div class="tree-empty" style="min-height:200px"><span class="big-icon">🔍</span>Bilatu partiturak goiko filtroetan</div>`;
+  document.getElementById('bista-count').textContent = '';
+};
+
+// Enter key triggers search from any filter field
+document.querySelectorAll('#page-bista input, #page-bista select').forEach(el => {
+  el.addEventListener('keydown', e => { if(e.key==='Enter') runBistaSearch(); });
+});
+
+// ── BOOT ──
+if (state.token && state.user) showApp();
+else document.getElementById('login-screen').style.display = 'flex';
+
+// ── Backup ──────────────────────────────────────────────────────────────────
+async function exportBackup() {
+  try {
+    const resp = await fetch(`${API}/backup/export`, {
+      headers: { 'Authorization': 'Bearer ' + state.token }
+    });
+    if (!resp.ok) {
+      const err = await resp.json();
+      return toast(err.error || 'Errorea', 'error');
+    }
+    const blob = await resp.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    const cd   = resp.headers.get('Content-Disposition') || '';
+    const m    = cd.match(/filename="([^"]+)"/);
+    a.href     = url;
+    a.download = m ? m[1] : 'tutb_backup.sql';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Babeskopia deskargatuta ✓', 'success');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function importBackup() {
+  const fileInput = document.getElementById('import-file');
+  if (!fileInput?.files[0]) return toast('Hautatu .sql fitxategi bat', 'error');
+  if (!confirm('⚠ KONTUZ: datu-base osoa ordezkatuko da. Jarraitu?')) return;
+  const fd = new FormData();
+  fd.append('file', fileInput.files[0]);
+  try {
+    toast('Inportatzen...', 'info');
+    const resp = await fetch(`${API}/backup/import`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + state.token },
+      body: fd
+    });
+    const data = await resp.json();
+    if (!resp.ok) return toast(data.error || 'Errorea', 'error');
+    toast(data.message || 'Inportatuta ✓', 'success');
+    fileInput.value = '';
+    // Recargar datos
+    await loadLookups();
+    renderLookupGrid();
+    loadUsuarios();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+</script>
+</body>
+</html>
