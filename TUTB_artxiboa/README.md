@@ -29,6 +29,7 @@ sudo apt install -y python3 python3-pip python3-venv \
 │   ├── requirements.txt
 │   ├── migrate_media.py
 │   ├── set_admin_password.py
+│   ├── version.json
 │   ├── routes/
 │   │   ├── auth.py
 │   │   ├── obras.py
@@ -48,7 +49,7 @@ sudo apt install -y python3 python3-pip python3-venv \
 
 /var/www/tutb/
 ├── tutb_frontend.html
-└── tutb_mobile.html
+└── (tutb_mobile.html — obsoleto, sustituido por diseño responsive)
 ```
 
 ### Descripción de cada fichero
@@ -89,8 +90,8 @@ sudo apt install -y python3 python3-pip python3-venv \
 
 | Fichero | Descripción |
 |---------|-------------|
-| `tutb_frontend.html` | Aplicación web completa de escritorio en un único fichero HTML+CSS+JS. Interfaz en euskera. Pestañas: Nabigatu (búsqueda con filtros), Zuhaitz orokorra (árbol completo), Kontzertuak y Admin (catálogos, usuarios, backup). |
-| `tutb_mobile.html` | Versión móvil independiente. Tema oscuro, diseño responsive, drawer de filtros, cards expandibles, visor de PDF/imagen/audio/vídeo. Solo lectura. |
+| `tutb_frontend.html` | Aplicación web responsive en un único fichero HTML+CSS+JS. Interfaz en euskera. En escritorio: pestañas superiores (Nabigatu, Zuhaitz orokorra, Kontzertuak, Admin). En móvil: barra de navegación inferior (sin Admin). La versión actual se muestra en el footer, leyéndola de `version.json`. |
+| `version.json` | Fichero con el número de versión actual (`{"version": "1.2"}`). El backend lo sirve en `GET /api/version`. El HTML lo carga al arrancar y lo muestra en el footer. Para publicar una nueva versión, basta con cambiar el número aquí. |
 
 ---
 
@@ -200,7 +201,6 @@ También se pueden pasar como variables de entorno en lugar de editar el fichero
 
 ```bash
 sudo cp tutb_frontend.html /var/www/tutb/
-sudo cp tutb_mobile.html   /var/www/tutb/
 ```
 
 ### Cambiar la URL de la API en el frontend
@@ -209,8 +209,7 @@ Por defecto el frontend apunta a `http://localhost:5000/api`. En producción:
 
 ```bash
 sudo sed -i "s|http://localhost:5000/api|https://TU_DOMINIO/api|g" \
-    /var/www/tutb/tutb_frontend.html \
-    /var/www/tutb/tutb_mobile.html
+    /var/www/tutb/tutb_frontend.html
 ```
 
 ### Probar manualmente
@@ -454,7 +453,47 @@ tar -xzf tutb_media_20260101.tar.gz -C ~/TUTB/
 
 ---
 
-## 12. Solución de problemas habituales
+## 12. Gestión de versiones
+
+El número de versión se mantiene en un único fichero dentro del backend:
+
+```
+~/TUTB/tutb_backend/version.json
+```
+
+Contenido:
+
+```json
+{"version": "1.2"}
+```
+
+El backend expone un endpoint público `GET /api/version` que devuelve ese JSON. El frontend lo lee al arrancar y lo muestra en el footer (`TUTB · Txistularis Artxiboa · v1.2`).
+
+Para publicar una nueva versión, basta con editar ese fichero en el servidor:
+
+```bash
+echo '{"version": "1.3"}' > ~/TUTB/tutb_backend/version.json
+```
+
+No hace falta reiniciar ningún servicio — el navegador lo cargará en la próxima visita.
+
+El endpoint se registra en `app.py`:
+
+```python
+@app.route('/api/version')
+def get_version():
+    import json, os
+    vfile = os.path.join(os.path.dirname(__file__), 'version.json')
+    try:
+        with open(vfile) as f:
+            return jsonify(json.load(f))
+    except:
+        return jsonify({"version": "?"})
+```
+
+---
+
+## 13. Solución de problemas habituales
 
 **Error 1054 Unknown column 'notas' en INSERT**  
 El `lookups.py` del servidor es una versión antigua que intenta insertar columnas inexistentes (`notas`, `descripcion`) en tablas de catálogo. Actualizar `routes/lookups.py`.

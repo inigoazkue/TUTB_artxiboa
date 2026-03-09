@@ -56,6 +56,17 @@ def create_app():
     def mobile():
         return send_from_directory(static_dir, 'tutb_mobile.html')
 
+    # Versión
+    @app.route('/api/version')
+    def get_version():
+        import json
+        vfile = os.path.join(os.path.dirname(__file__), 'version.json')
+        try:
+            with open(vfile) as f:
+                return jsonify(json.load(f))
+        except Exception:
+            return jsonify({'version': '?'})
+
     return app
 
 # Variable global para gunicorn (gunicorn app:app)
